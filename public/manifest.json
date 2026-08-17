@@ -1,0 +1,15 @@
+{
+  "name": "The Family Expedition",
+  "short_name": "Expedition",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4e4c1",
+  "theme_color": "#2c4a3e",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
