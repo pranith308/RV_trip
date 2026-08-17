@@ -1,0 +1,412 @@
+/* Local-only styles for the gate lab. Nothing here ships with the app. */
+
+.lab-body {
+  margin: 0;
+  min-height: 100dvh;
+  background: radial-gradient(ellipse at top, #2a4a3c, #14281f 55%, #0d1a14);
+}
+
+.gl-lab {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+  color: #f3e7cf;
+  font-family: 'Nunito', 'Segoe UI', sans-serif;
+}
+
+.gl-lab-head {
+  margin-bottom: 2rem;
+}
+
+.gl-lab-kicker {
+  margin: 0 0 0.4rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #c4b184;
+}
+
+.gl-lab-head h1 {
+  margin: 0 0 0.6rem;
+  font-family: 'Caveat', cursive;
+  font-size: 2.6rem;
+  font-weight: 700;
+}
+
+.gl-lab-lead {
+  margin: 0;
+  max-width: 62ch;
+  line-height: 1.5;
+  color: #ddd0b3;
+}
+
+.gl-block {
+  margin-top: 2.6rem;
+}
+
+.gl-block-head h2 {
+  margin: 0 0 0.25rem;
+  font-family: 'Caveat', cursive;
+  font-size: 1.9rem;
+  font-weight: 700;
+}
+
+.gl-block-head p {
+  margin: 0 0 1rem;
+  max-width: 70ch;
+  color: #cbbb99;
+  font-size: 0.94rem;
+  line-height: 1.45;
+}
+
+.gl-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.4rem;
+}
+
+.gl-phone-wrap {
+  margin: 0;
+}
+
+.gl-phone-wrap figcaption {
+  margin-top: 0.5rem;
+  text-align: center;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #bfae8b;
+}
+
+/* Phone shell */
+.gl-phone {
+  width: 320px;
+  height: 620px;
+  overflow: hidden;
+  position: relative;
+  border-radius: 1.5rem;
+  background: var(--paper);
+  box-shadow:
+    0 0 0 1px #cbbba0,
+    0 20px 44px rgba(0, 0, 0, 0.4);
+}
+
+.gl-gate {
+  position: absolute;
+  inset: 0;
+  padding: 0.9rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.gl-card {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.9rem 0.95rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 1.1rem;
+  background: color-mix(in srgb, var(--cream) 94%, transparent);
+  box-shadow:
+    0 6px 0 var(--paper-deep),
+    0 10px 22px rgba(80, 50, 20, 0.12);
+  overflow: hidden;
+}
+
+/* Masthead */
+.gl-masthead {
+  position: relative;
+  text-align: center;
+}
+
+.gl-kicker {
+  margin: 0 0 0.5rem;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.gl-title {
+  margin: 0.15rem 0 0;
+  font-family: 'Caveat', cursive;
+  font-size: 2.1rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  color: #3d2c18;
+}
+
+.gl-tag {
+  margin: 0.15rem 0 0;
+  font-family: 'Patrick Hand', 'Segoe UI', sans-serif;
+  font-size: 1.02rem;
+  color: var(--rust);
+  letter-spacing: 0.06em;
+}
+
+.gl-rule {
+  display: block;
+  width: 100%;
+  height: 12px;
+  margin: 0.45rem 0 0.55rem;
+}
+
+.gl-scene {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0.1rem 0 0.35rem;
+}
+
+/* Body */
+.gl-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.gl-lead {
+  margin: 0.1rem 0 0.2rem;
+  font-family: 'Patrick Hand', 'Segoe UI', sans-serif;
+  font-size: 1.05rem;
+  text-align: center;
+  color: var(--ink);
+}
+
+.gl-roster {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.gl-roster-btn {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 3.1rem;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 0.8rem;
+  background: #fffaf0;
+  box-shadow: 0 3px 0 #e3d0ae;
+}
+
+.gl-mark {
+  display: grid;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border: 1px solid #c19f78;
+  border-radius: 0.35rem;
+  background: #d9b892;
+  font-family: 'Caveat', cursive;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #3d2c18;
+}
+
+.gl-roster-name {
+  font-family: 'Patrick Hand', 'Segoe UI', sans-serif;
+  font-size: 1.18rem;
+  text-align: left;
+  color: var(--ink);
+}
+
+.gl-known {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.gl-bullet {
+  position: absolute;
+  right: 0.55rem;
+  bottom: -0.35rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  opacity: 0.55;
+}
+
+.gl-primary {
+  display: grid;
+  place-items: center;
+  min-height: 2.7rem;
+  border-radius: 999px;
+  background: var(--rust);
+  color: #fff8ea;
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+  box-shadow: 0 6px 14px rgba(120, 50, 20, 0.2);
+}
+
+.gl-text-btn {
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.gl-field-label {
+  margin: 0.2rem 0 -0.2rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.gl-field {
+  display: flex;
+  align-items: center;
+  min-height: 2.7rem;
+  padding: 0 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 0.7rem;
+  background: #fffaf0;
+  color: #a6947a;
+  font-family: 'Patrick Hand', 'Segoe UI', sans-serif;
+  font-size: 1.02rem;
+}
+
+/* PIN */
+.gl-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.55rem;
+  margin: 0.2rem 0 0.1rem;
+}
+
+.gl-dot {
+  width: 0.85rem;
+  height: 0.85rem;
+  border: 1.5px solid #b2946a;
+  border-radius: 50%;
+}
+
+.gl-dot.is-filled {
+  background: var(--rust);
+  border-color: var(--rust);
+}
+
+.gl-pad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.4rem;
+}
+
+.gl-key {
+  display: grid;
+  place-items: center;
+  min-height: 2.5rem;
+  border: 1px solid var(--line);
+  border-radius: 0.7rem;
+  background: #fffaf0;
+  font-family: 'Patrick Hand', 'Segoe UI', sans-serif;
+  font-size: 1.2rem;
+  color: var(--ink);
+  box-shadow: 0 3px 0 #e3d0ae;
+}
+
+.gl-key.is-blank {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* Drawing band under the card */
+.gl-band {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-height: 0;
+}
+
+.gl-band-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.gl-band-top {
+  position: absolute;
+  top: 0.35rem;
+  left: 0;
+  width: 100%;
+  height: auto;
+}
+
+/* Look: Trail Postcard */
+.look-postcard .gl-title {
+  display: inline-block;
+  padding: 0.1rem 1rem 0.2rem;
+  background: #d9b892;
+  border: 1px solid #c19f78;
+  border-radius: 0.2rem;
+  transform: rotate(-2deg);
+  box-shadow: 0 6px 14px rgba(80, 50, 20, 0.12);
+}
+
+/* Look: Map Sheet */
+.gl-map-bed {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.look-mapsheet .gl-card {
+  background: color-mix(in srgb, var(--cream) 90%, transparent);
+}
+
+/* Look: Sticker Journal */
+.look-stickers .gl-card {
+  margin: 0 0.7rem;
+  background: color-mix(in srgb, var(--cream) 94%, transparent);
+}
+
+.look-stickers .gl-title {
+  display: inline-block;
+  padding: 0.05rem 0.85rem 0.15rem;
+  background: rgba(185, 201, 180, 0.5);
+  border-radius: 0.2rem;
+  font-size: 1.9rem;
+  white-space: nowrap;
+  transform: rotate(-1.5deg);
+}
+
+.gl-sticker-tr {
+  position: absolute;
+  top: 0.15rem;
+  right: 0.1rem;
+  z-index: 3;
+  width: 3.6rem;
+  height: 3.6rem;
+  transform: rotate(9deg);
+  filter: drop-shadow(0 2px 3px rgba(80, 50, 20, 0.2));
+}
+
+.gl-sticker-bl {
+  position: absolute;
+  left: 0.35rem;
+  bottom: 42%;
+  z-index: 3;
+  width: 4.4rem;
+  height: 3rem;
+  transform: rotate(-6deg);
+}
+

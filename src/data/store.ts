@@ -1,6 +1,6 @@
 import type { TripData } from '../types'
 import { getSupabase, isCloudConfigured } from './supabase'
-import { EMPTY_TRIP, normalizeTrip, sameTrip } from './tripShape'
+import { EMPTY_TRIP, ensureShopCategories, normalizeTrip, sameTrip } from './tripShape'
 
 const KEY = 'expedition.tripData'
 const STATE_ID = 'main'
@@ -13,7 +13,9 @@ let pushing = false
 function loadLocal(): TripData {
   try {
     const raw = localStorage.getItem(KEY)
-    return raw ? normalizeTrip(JSON.parse(raw)) : EMPTY_TRIP
+    const next = raw ? ensureShopCategories(normalizeTrip(JSON.parse(raw))) : EMPTY_TRIP
+    localStorage.setItem(KEY, JSON.stringify(next))
+    return next
   } catch {
     return EMPTY_TRIP
   }
@@ -81,14 +83,18 @@ export async function bootTrip() {
     return
   }
 
-  const cloud = data?.data ? normalizeTrip(data.data) : EMPTY_TRIP
+  const cloudParsed = data?.data ? normalizeTrip(data.data) : EMPTY_TRIP
+  const cloud = data?.data ? ensureShopCategories(cloudParsed) : EMPTY_TRIP
   const cloudEmpty = sameTrip(cloud, EMPTY_TRIP)
   const localEmpty = sameTrip(snapshot, EMPTY_TRIP)
+  const cloudNeedsSave = Boolean(data?.data) && !sameTrip(cloud, cloudParsed)
 
   if (cloudEmpty && !localEmpty) {
     await pushTrip(snapshot)
   } else if (!cloudEmpty && !sameTrip(cloud, snapshot)) {
-    emit(cloud, false)
+    emit(cloud, cloudNeedsSave)
+  } else if (cloudNeedsSave) {
+    await pushTrip(cloud)
   }
 
   supabase
@@ -99,8 +105,11 @@ export async function bootTrip() {
       (payload) => {
         const row = payload.new as { data?: unknown } | null
         if (!row?.data) return
-        const next = normalizeTrip(row.data)
-        if (!sameTrip(next, snapshot)) emit(next, false)
+        const next = ensureShopCategories(normalizeTrip(row.data))
+        if (!sameTrip(next, snapshot)) {
+          const migrated = !sameTrip(next, normalizeTrip(row.data))
+          emit(next, migrated)
+        }
       },
     )
     .subscribe()

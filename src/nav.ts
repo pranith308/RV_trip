@@ -6,7 +6,10 @@ export const SECTIONS = [
     showAdd: false,
     cornerAdd: false,
     composer: 'none',
-    subs: [] as { id: string; label: string }[],
+    subs: [
+      { id: 'days', label: 'Days' },
+      { id: 'bookings', label: 'Bookings' },
+    ],
   },
   {
     id: 'shop',
@@ -17,7 +20,7 @@ export const SECTIONS = [
     composer: 'shop',
     subs: [
       { id: 'everyone', label: 'Everyone' },
-      { id: 'me', label: 'My List' },
+      { id: 'me', label: "My List" },
     ],
   },
   {

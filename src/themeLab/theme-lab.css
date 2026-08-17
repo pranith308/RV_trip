@@ -1,0 +1,1006 @@
+.lab-body {
+  margin: 0;
+  background: #1a3329;
+}
+
+#lab-root {
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  background: #f4e4c1;
+  overflow: auto;
+}
+
+.tlab-page {
+  padding: 1.1rem 1rem 3rem;
+}
+
+.tlab-intro h1 {
+  font-size: 1.7rem;
+  color: var(--forest);
+  margin: 0 0 0.4rem;
+}
+
+.tlab-kicker {
+  font-family: var(--display);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  color: var(--rust);
+  margin-bottom: 0.3rem;
+}
+
+.tlab-intro p {
+  line-height: 1.45;
+  margin: 0 0 0.8rem;
+}
+
+.tlab-jump {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1.4rem;
+}
+
+.tlab-jump a {
+  font-family: var(--display);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--navy);
+  border: 2px solid var(--ink);
+  background: var(--cream);
+  padding: 0.28rem 0.5rem;
+}
+
+.tlab-block {
+  display: grid;
+  gap: 0.8rem;
+  margin-bottom: 2.2rem;
+  scroll-margin-top: 0.6rem;
+}
+
+@media (min-width: 760px) {
+  .tlab-block {
+    grid-template-columns: 220px 1fr;
+    align-items: start;
+  }
+}
+
+.tlab-copy h2 {
+  font-size: 1.15rem;
+  color: var(--forest);
+  margin: 0 0 0.35rem;
+}
+
+.tlab-copy p {
+  margin: 0 0 0.7rem;
+  color: var(--ink);
+  line-height: 1.4;
+}
+
+.tlab-pick {
+  border: 2px solid var(--ink);
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--display);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.4rem 0.7rem;
+}
+
+.tlab-pick.is-on {
+  background: var(--rust);
+  color: #fff8ea;
+}
+
+.phone {
+  width: min(390px, 100%);
+  height: 640px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 3px solid #1c2b22;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
+  background: #f4e4c1;
+}
+
+.phone-header {
+  position: relative;
+  flex-shrink: 0;
+  height: 78px;
+  overflow: hidden;
+  color: #fff8ea;
+}
+
+.phone-art {
+  display: block;
+  width: 100%;
+  height: 78px;
+}
+
+.phone-header-copy {
+  position: absolute;
+  left: 0.75rem;
+  bottom: 0.4rem;
+  z-index: 1;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+}
+
+.phone-kicker {
+  margin: 0;
+  font-family: var(--display);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 0.58rem;
+  color: #f0d48a;
+}
+
+.phone-header-copy h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.phone-chip {
+  position: absolute;
+  right: 0.5rem;
+  bottom: 0.35rem;
+  z-index: 1;
+  background: rgba(251, 246, 232, 0.92);
+  color: #1c2b22;
+  border: 2px solid #1c2b22;
+  padding: 0.18rem 0.4rem;
+  font-family: var(--display);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.phone-top,
+.phone-bottom {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: #1e3d56;
+  color: #d7e4dc;
+  flex-shrink: 0;
+}
+
+.phone-bottom {
+  grid-template-columns: 1fr 1fr;
+  flex: 1;
+}
+
+.phone-top span,
+.phone-bottom button {
+  min-height: 2.7rem;
+  display: grid;
+  place-items: center;
+  font-family: var(--display);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 0.62rem;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  position: relative;
+}
+
+.phone-top .is-on,
+.phone-bottom .is-on {
+  color: #fff8ea;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.phone-top .is-on::after,
+.phone-bottom .is-on::after {
+  content: '';
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  height: 3px;
+  background: #c9922a;
+}
+
+.phone-top .is-on::after {
+  bottom: 0;
+}
+
+.phone-bottom .is-on::after {
+  top: 0;
+}
+
+.phone-main {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 0.8rem 0.75rem 1rem;
+}
+
+.phone-days {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.phone-day {
+  border: 2px solid #1c2b22;
+  background: #fbf6e8;
+  padding: 0.55rem 0.65rem 0.65rem;
+}
+
+.phone-day-head {
+  width: 100%;
+  display: flex;
+  gap: 0.45rem;
+  align-items: center;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  text-align: left;
+  font-family: var(--display);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #2c4a3e;
+}
+
+.phone-caret {
+  color: #c4471a;
+}
+
+.phone-day-body ul {
+  list-style: none;
+  margin: 0.45rem 0 0;
+  padding: 0;
+}
+
+.phone-booking,
+.phone-place {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.4rem;
+  padding: 0.35rem 0.4rem;
+}
+
+.phone-booking {
+  background: #f4e4c1;
+  margin-top: 0.5rem;
+  font-size: 0.88rem;
+}
+
+.phone-booking em {
+  font-style: normal;
+  font-family: var(--display);
+  color: #1e3d56;
+}
+
+.phone-place {
+  border-bottom: 1px solid #e8d5a4;
+  font-size: 0.92rem;
+}
+
+.phone-place small {
+  display: block;
+  color: #7a6548;
+  font-size: 0.78rem;
+}
+
+.phone-add-place {
+  margin: 0.55rem 0 0;
+  color: #7a6548;
+  font-size: 0.88rem;
+}
+
+.phone-booking-card {
+  border: 2px solid #1c2b22;
+  background: #fbf6e8;
+  padding: 0.8rem;
+}
+
+.phone-booking-card h4 {
+  margin: 0 0 0.35rem;
+  font-family: var(--display);
+  text-transform: uppercase;
+}
+
+.phone-booking-card p {
+  margin: 0.2rem 0;
+}
+
+.phone-dock {
+  flex-shrink: 0;
+}
+
+.phone-plus {
+  width: 100%;
+  min-height: 2.7rem;
+  background: #c4471a;
+  color: #fff8ea;
+  font-family: var(--display);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 0;
+  border-top: 3px solid #1c2b22;
+}
+
+/* Sketch */
+.theme-sketch {
+  background: #f6edd8;
+  font-family: 'Patrick Hand', cursive;
+}
+
+.theme-sketch .phone-header-copy h3,
+.theme-sketch .phone-kicker,
+.theme-sketch .phone-chip,
+.theme-sketch .phone-top span,
+.theme-sketch .phone-bottom button,
+.theme-sketch .phone-plus,
+.theme-sketch .phone-day-head {
+  font-family: 'Patrick Hand', cursive;
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+
+.theme-sketch .phone-top,
+.theme-sketch .phone-bottom {
+  background: #3a3224;
+}
+
+.theme-sketch .phone-day,
+.theme-sketch .phone-booking-card,
+.theme-sketch .phone-chip {
+  border: 2.5px solid #2b2418;
+  border-radius: 18px 6px 22px 8px / 8px 20px 6px 16px;
+  background: #fffdf6;
+  box-shadow: 3px 4px 0 #c9b48a;
+}
+
+.theme-sketch .phone-plus {
+  background: #d85a2a;
+  border-radius: 40% 60% 50% 50% / 40% 40% 60% 50%;
+}
+
+.theme-sketch .phone-booking {
+  border: 1.5px dashed #2b2418;
+  background: #fff3c8;
+  transform: rotate(-0.6deg);
+}
+
+/* Comic */
+.theme-comic {
+  background: #fff4d6;
+}
+
+.theme-comic .phone-header-copy h3,
+.theme-comic .phone-chip,
+.theme-comic .phone-top span,
+.theme-comic .phone-bottom button,
+.theme-comic .phone-plus,
+.theme-comic .phone-day-head,
+.theme-comic .phone-booking-card h4 {
+  font-family: Bangers, cursive;
+  letter-spacing: 0.04em;
+}
+
+.theme-comic .phone-top,
+.theme-comic .phone-bottom {
+  background: #111;
+  color: #ffe14a;
+}
+
+.theme-comic .phone-day,
+.theme-comic .phone-booking-card {
+  border: 3px solid #111;
+  box-shadow: 5px 5px 0 #111;
+  background: #fff;
+  animation: comic-pop 2.8s ease-in-out infinite;
+}
+
+.theme-comic .phone-day.is-open {
+  animation: none;
+  transform: rotate(-0.4deg);
+}
+
+.theme-comic .phone-plus {
+  background: #ff3b3b;
+  box-shadow: inset 0 -4px 0 #111;
+}
+
+.theme-comic .phone-booking {
+  background: #ffe14a;
+  border: 3px solid #111;
+}
+
+@keyframes comic-pop {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+/* Neon */
+.theme-neon {
+  background: #160a22;
+  color: #f7e9ff;
+}
+
+.theme-neon .phone-top,
+.theme-neon .phone-bottom {
+  background: #07040d;
+  color: #21e6ff;
+}
+
+.theme-neon .phone-day,
+.theme-neon .phone-booking-card {
+  background: #241133;
+  border: 2px solid #ff3d9a;
+  box-shadow: 0 0 12px rgba(255, 61, 154, 0.35);
+}
+
+.theme-neon .phone-day-head,
+.theme-neon .phone-header-copy h3 {
+  color: #21e6ff;
+  text-shadow: 0 0 8px #21e6ff;
+}
+
+.theme-neon .phone-chip {
+  background: #12081c;
+  color: #ff3d9a;
+  border-color: #ff3d9a;
+  box-shadow: 0 0 10px rgba(255, 61, 154, 0.6);
+}
+
+.theme-neon .phone-plus {
+  background: #ff3d9a;
+  animation: neon-pulse 1.8s ease-in-out infinite;
+}
+
+.theme-neon .phone-place,
+.theme-neon .phone-add-place,
+.theme-neon .phone-place small {
+  color: #d8c6ea;
+  border-color: #4a2a62;
+}
+
+@keyframes neon-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 8px #ff3d9a;
+  }
+  50% {
+    box-shadow: 0 0 18px #21e6ff;
+  }
+}
+
+/* Scrapbook */
+.theme-scrap {
+  background: #f8dcc8;
+  background-image: radial-gradient(#e8b89a 0.8px, transparent 0.8px);
+  background-size: 10px 10px;
+  font-family: Caveat, cursive;
+}
+
+.theme-scrap .phone-header-copy h3,
+.theme-scrap .phone-chip,
+.theme-scrap .phone-day-head,
+.theme-scrap .phone-plus,
+.theme-scrap .phone-top span,
+.theme-scrap .phone-bottom button {
+  font-family: Caveat, cursive;
+  text-transform: none;
+  font-size: 1rem;
+  letter-spacing: 0;
+}
+
+.theme-scrap .phone-top,
+.theme-scrap .phone-bottom {
+  background: #8a3b2a;
+}
+
+.theme-scrap .phone-day {
+  background: #fffdf8;
+  transform: rotate(-1.2deg);
+  box-shadow: 0 8px 0 #e8c4a4;
+}
+
+.theme-scrap .phone-day:nth-child(2) {
+  transform: rotate(1.4deg);
+}
+
+.theme-scrap .phone-day.is-open {
+  transform: rotate(0);
+}
+
+.theme-scrap .phone-booking {
+  background: #ffe08a;
+  transform: rotate(1deg);
+}
+
+.theme-scrap .phone-plus {
+  background: #e35d6a;
+}
+
+/* Sunny cartoon */
+.theme-sunny {
+  background: #fff6c8;
+}
+
+.theme-sunny .phone-top,
+.theme-sunny .phone-bottom {
+  background: #3aa0ff;
+  color: #fff;
+}
+
+.theme-sunny .phone-day,
+.theme-sunny .phone-booking-card,
+.theme-sunny .phone-chip {
+  border-radius: 1.1rem;
+  border-width: 3px;
+  background: #fff;
+}
+
+.theme-sunny .phone-day-head {
+  color: #ef5d2e;
+}
+
+.theme-sunny .phone-plus {
+  background: #ff6b4a;
+  border-radius: 1.4rem 1.4rem 0 0;
+}
+
+.theme-sunny .sun-bounce {
+  transform-origin: 340px 18px;
+  animation: sun-spin 8s linear infinite;
+}
+
+.theme-sunny .van-bounce {
+  animation: van-hop 1.4s ease-in-out infinite;
+}
+
+@keyframes sun-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes van-hop {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(10px);
+  }
+}
+
+/* Atlas */
+.theme-atlas {
+  background:
+    repeating-linear-gradient(0deg, #eef5dc, #eef5dc 27px, #dbe8c4 28px),
+    repeating-linear-gradient(90deg, transparent, transparent 27px, #dbe8c4 28px);
+}
+
+.theme-atlas .phone-top,
+.theme-atlas .phone-bottom {
+  background: #355a3a;
+}
+
+.theme-atlas .phone-day {
+  background: #fffde8;
+  outline: 3px solid #ffe14a;
+  outline-offset: -6px;
+}
+
+.theme-atlas .phone-booking {
+  background: #ffe14a;
+  font-weight: 700;
+}
+
+.theme-atlas .dash-move {
+  animation: dash 1.2s linear infinite;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -28;
+  }
+}
+
+/* Stickers */
+.theme-sticker {
+  background: #1f3d32;
+  color: #fff8ea;
+}
+
+.theme-sticker .phone-top,
+.theme-sticker .phone-bottom {
+  background: #111;
+  color: #ffe14a;
+}
+
+.theme-sticker .phone-day,
+.theme-sticker .phone-booking-card {
+  background: #fff8ea;
+  color: #1c2b22;
+  border: 4px solid #111;
+  transform: rotate(-1deg);
+  box-shadow: 6px 6px 0 #111;
+}
+
+.theme-sticker .phone-day:nth-child(2) {
+  transform: rotate(1.5deg);
+  background: #ffe14a;
+}
+
+.theme-sticker .phone-day-head,
+.theme-sticker .phone-plus,
+.theme-sticker .phone-chip,
+.theme-sticker .phone-header-copy h3 {
+  font-family: 'Permanent Marker', cursive;
+  text-transform: none;
+}
+
+.theme-sticker .phone-plus {
+  background: #ff5a36;
+  transform: rotate(-0.5deg);
+}
+
+.tlab-earlier {
+  font-size: 1.05rem;
+  color: var(--forest);
+  margin: 0.4rem 0 0.7rem;
+}
+
+.phone.is-paper {
+  border-radius: 28px 22px 30px 24px / 22px 28px 20px 26px;
+  border: 2px solid #3a3224;
+}
+
+.phone.is-paper .phone-header-copy,
+.phone.is-paper .phone-header-copy h3,
+.phone.is-paper .phone-kicker {
+  color: #2b2418;
+  text-shadow: none;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  font-family: inherit;
+}
+
+.phone.is-paper .phone-kicker {
+  opacity: 0.72;
+  font-size: 0.72rem;
+}
+
+.phone.is-paper .phone-chip {
+  border-radius: 16px 8px 18px 10px / 10px 18px 8px 16px;
+  text-transform: none;
+  letter-spacing: 0;
+  font-family: inherit;
+}
+
+.phone.is-paper .phone-top,
+.phone.is-paper .phone-bottom {
+  background: transparent;
+  color: #3a3224;
+}
+
+.phone.is-paper .phone-top span,
+.phone.is-paper .phone-bottom button,
+.phone.is-paper .phone-day-head,
+.phone.is-paper .phone-plus,
+.phone.is-paper .phone-booking-card h4 {
+  text-transform: none;
+  letter-spacing: 0.01em;
+  font-family: inherit;
+}
+
+.phone.is-paper .phone-top .is-on,
+.phone.is-paper .phone-bottom .is-on {
+  color: #8a3b2a;
+  background: transparent;
+}
+
+.phone.is-paper .phone-top .is-on::after,
+.phone.is-paper .phone-bottom .is-on::after {
+  height: 2px;
+  border-radius: 2px;
+  background: #c4471a;
+  transform: rotate(-1.4deg);
+}
+
+.phone.is-paper .phone-day,
+.phone.is-paper .phone-booking-card {
+  border-radius: 22px 12px 26px 10px / 12px 24px 10px 20px;
+}
+
+.phone.is-paper .phone-plus {
+  border-top: 0;
+  width: calc(100% - 1.6rem);
+  margin: 0.2rem 0.8rem 0.5rem;
+  border-radius: 40% 60% 50% 50% / 50% 40% 60% 50%;
+}
+
+.phone.is-paper .phone-place {
+  border-bottom: 1px dashed rgba(58, 50, 36, 0.28);
+}
+
+/* Journal */
+.theme-journal {
+  background:
+    repeating-linear-gradient(#f7f1e3, #f7f1e3 27px, #d7e0ec 28px);
+  font-family: 'Architects Daughter', cursive;
+}
+
+.theme-journal .phone-main {
+  padding-left: 1.35rem;
+  background-image: linear-gradient(#e07a6a, #e07a6a);
+  background-size: 2px 100%;
+  background-repeat: no-repeat;
+  background-position: 0.85rem 0;
+}
+
+.theme-journal .phone-day,
+.theme-journal .phone-booking-card {
+  background: rgba(255, 252, 245, 0.72);
+  border: 1.5px solid #cbbba0;
+  box-shadow: none;
+}
+
+.theme-journal .phone-plus {
+  background: #c4471a;
+}
+
+/* Kraft */
+.theme-kraft {
+  background: #c4a574;
+  background-image:
+    radial-gradient(rgba(80, 50, 20, 0.12) 1px, transparent 1px);
+  background-size: 7px 7px;
+  font-family: 'Homemade Apple', cursive;
+}
+
+.theme-kraft .phone-day,
+.theme-kraft .phone-booking-card,
+.theme-kraft .phone-chip {
+  background: #ddc49a;
+  border: 1.5px solid #6b4a24;
+  box-shadow: 3px 4px 0 #a07c4a;
+}
+
+.theme-kraft .phone-booking {
+  background: #ead4ae;
+  border: 1px dashed #6b4a24;
+}
+
+.theme-kraft .phone-plus {
+  background: #6b4a24;
+}
+
+.theme-kraft .phone-day-head,
+.theme-kraft .phone-header-copy h3 {
+  color: #3a2814;
+}
+
+/* Sticky */
+.theme-sticky {
+  background: #c9a06a;
+  background-image: radial-gradient(#7a5a32 1.1px, transparent 1.2px);
+  background-size: 18px 18px;
+  font-family: 'Indie Flower', cursive;
+}
+
+.theme-sticky .phone-day {
+  background: #fff3a0;
+  border: 0;
+  box-shadow: 2px 6px 10px rgba(60, 40, 10, 0.22);
+  transform: rotate(-1.4deg);
+}
+
+.theme-sticky .phone-day:nth-child(2) {
+  background: #ffd0e0;
+  transform: rotate(1.6deg);
+}
+
+.theme-sticky .phone-day.is-open {
+  transform: rotate(-0.3deg);
+}
+
+.theme-sticky .phone-booking-card {
+  background: #cde8ff;
+  border: 0;
+}
+
+.theme-sticky .phone-booking {
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.theme-sticky .phone-plus {
+  background: #d85a2a;
+}
+
+/* Postcard */
+.theme-postcard {
+  background: #efe4d2;
+  font-family: 'Indie Flower', cursive;
+}
+
+.theme-postcard .phone-main {
+  border-top: 3px dashed #c4471a;
+}
+
+.theme-postcard .phone-day,
+.theme-postcard .phone-booking-card {
+  background: #fffaf0;
+  border: 1.6px solid #b08968;
+  box-shadow: 4px 5px 0 #e0c8a8;
+}
+
+.theme-postcard .phone-booking {
+  background: #f7d9c4;
+}
+
+.theme-postcard .phone-plus {
+  background: #c4471a;
+}
+
+/* Watercolor */
+.theme-watercolor {
+  background: #f6f0e6;
+  font-family: 'Gloria Hallelujah', cursive;
+}
+
+.theme-watercolor .phone-day,
+.theme-watercolor .phone-booking-card,
+.theme-watercolor .phone-chip {
+  border: 0;
+  background: rgba(242, 198, 176, 0.45);
+  box-shadow: none;
+}
+
+.theme-watercolor .phone-day:nth-child(2) {
+  background: rgba(184, 212, 196, 0.5);
+}
+
+.theme-watercolor .phone-booking {
+  background: rgba(240, 212, 138, 0.55);
+}
+
+.theme-watercolor .phone-plus {
+  background: #c4471a;
+}
+
+/* Composition */
+.theme-composition {
+  background: #f4f0e6;
+  font-family: 'Gochi Hand', cursive;
+}
+
+.theme-composition.is-paper .phone-header-copy,
+.theme-composition.is-paper .phone-header-copy h3,
+.theme-composition.is-paper .phone-kicker {
+  color: #f4f0e6;
+}
+
+.theme-composition .phone-day,
+.theme-composition .phone-booking-card {
+  background: #fff;
+  border: 1.6px solid #222;
+}
+
+.theme-composition .phone-plus {
+  background: #222;
+}
+
+/* Logbook */
+.theme-logbook {
+  background:
+    repeating-linear-gradient(#dce8d4, #dce8d4 26px, #b7c9ad 27px);
+  font-family: Kalam, cursive;
+}
+
+.theme-logbook .phone-day,
+.theme-logbook .phone-booking-card {
+  background: rgba(255, 255, 245, 0.7);
+  border: 1.5px solid #6a8a62;
+}
+
+.theme-logbook .phone-booking {
+  background: #ffe08a;
+  border-radius: 40% 60% 50% 50% / 50% 40% 60% 50%;
+}
+
+.theme-logbook .phone-plus {
+  background: #355a3a;
+}
+
+/* Index cards */
+.theme-index {
+  background: #e8dfc8;
+  font-family: Kalam, cursive;
+}
+
+.theme-index .phone-day {
+  background: #fffdf6;
+  border: 1.5px solid #b9a888;
+  box-shadow: 6px 6px 0 #d4c7aa;
+  transform: rotate(-0.8deg);
+}
+
+.theme-index .phone-day:nth-child(2) {
+  transform: rotate(1deg);
+  margin-left: 0.35rem;
+}
+
+.theme-index .phone-booking-card {
+  background: #fffdf6;
+  border: 1.5px solid #b9a888;
+}
+
+.theme-index .phone-plus {
+  background: #8a3b2a;
+}
+
+/* Graph margins */
+.theme-margin {
+  background:
+    repeating-linear-gradient(0deg, #f3efe0, #f3efe0 23px, #d8d2bc 24px),
+    repeating-linear-gradient(90deg, transparent, transparent 23px, #d8d2bc 24px);
+  font-family: 'Patrick Hand', cursive;
+}
+
+.theme-margin .phone-day,
+.theme-margin .phone-booking-card {
+  background: rgba(255, 253, 232, 0.86);
+  border: 1.5px solid #c9b48a;
+  outline: 4px solid rgba(255, 225, 74, 0.45);
+  outline-offset: -7px;
+}
+
+.theme-margin .phone-plus {
+  background: #c4471a;
+}
+
+/* Washi */
+.theme-washi {
+  background: #f6ead8;
+  font-family: Caveat, cursive;
+}
+
+.theme-washi .phone-day,
+.theme-washi .phone-booking-card {
+  background: #fffdf8;
+  border: 1.4px solid #e0c8a8;
+  position: relative;
+}
+
+.theme-washi .phone-day::before,
+.theme-washi .phone-day:nth-child(2)::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 22%;
+  width: 38%;
+  height: 14px;
+  background: #f2b6c6;
+  transform: rotate(-4deg);
+  opacity: 0.9;
+}
+
+.theme-washi .phone-day:nth-child(2)::before {
+  background: #a8d4c4;
+  left: 40%;
+  transform: rotate(5deg);
+}
+
+.theme-washi .phone-plus {
+  background: #e35d6a;
+}

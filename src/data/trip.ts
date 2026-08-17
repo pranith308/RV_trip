@@ -1,9 +1,11 @@
 import { useCallback, useSyncExternalStore } from 'react'
 import type {
+  Booking,
   ChecklistItem,
   HowToNote,
   PlanDay,
   PlanPlace,
+  ShopCategory,
   ShopGroup,
   ShopItem,
   ShopScope,
@@ -11,40 +13,84 @@ import type {
 } from '../types'
 import { getSnapshot, newId, subscribe, updateTrip } from './store'
 
-function mapList(items: ShopItem[], mapper: (items: ShopItem[]) => ShopItem[]) {
-  return mapper(items)
-}
-
 function withShopItems(
   current: TripData,
   scope: ShopScope,
   mapper: (items: ShopItem[]) => ShopItem[],
 ): TripData {
+  return withShopBoard(current, scope, (board) => ({
+    ...board,
+    items: mapper(board.items),
+  }))
+}
+
+type ShopBoard = {
+  items: ShopItem[]
+  categories: ShopCategory[]
+}
+
+function boardForScope(data: TripData, scope: ShopScope): ShopBoard {
   if (scope.kind === 'everyone') {
-    return { ...current, shopEveryone: mapList(current.shopEveryone, mapper) }
+    return {
+      items: data.shopEveryone,
+      categories: data.shopEveryoneCategories ?? [],
+    }
   }
   if (scope.kind === 'me') {
-    const list = current.shopPersonal[scope.personId] ?? []
+    return {
+      items: data.shopPersonal[scope.personId] ?? [],
+      categories: data.shopPersonalCategories[scope.personId] ?? [],
+    }
+  }
+  const group = data.shopGroups.find((item) => item.id === scope.groupId)
+  return {
+    items: group?.items ?? [],
+    categories: group?.categories ?? [],
+  }
+}
+
+function withShopBoard(
+  current: TripData,
+  scope: ShopScope,
+  mapper: (board: ShopBoard) => ShopBoard,
+): TripData {
+  const next = mapper(boardForScope(current, scope))
+  if (scope.kind === 'everyone') {
+    return {
+      ...current,
+      shopEveryone: next.items,
+      shopEveryoneCategories: next.categories,
+    }
+  }
+  if (scope.kind === 'me') {
     return {
       ...current,
       shopPersonal: {
         ...current.shopPersonal,
-        [scope.personId]: mapList(list, mapper),
+        [scope.personId]: next.items,
+      },
+      shopPersonalCategories: {
+        ...current.shopPersonalCategories,
+        [scope.personId]: next.categories,
       },
     }
   }
   return {
     ...current,
     shopGroups: current.shopGroups.map((group) =>
-      group.id === scope.groupId ? { ...group, items: mapList(group.items, mapper) } : group,
+      group.id === scope.groupId
+        ? { ...group, items: next.items, categories: next.categories }
+        : group,
     ),
   }
 }
 
 export function itemsForScope(data: TripData, scope: ShopScope): ShopItem[] {
-  if (scope.kind === 'everyone') return data.shopEveryone
-  if (scope.kind === 'me') return data.shopPersonal[scope.personId] ?? []
-  return data.shopGroups.find((group) => group.id === scope.groupId)?.items ?? []
+  return boardForScope(data, scope).items
+}
+
+export function categoriesForScope(data: TripData, scope: ShopScope): ShopCategory[] {
+  return sortCategories(boardForScope(data, scope).categories)
 }
 
 export function useTripData() {
@@ -70,13 +116,96 @@ export function useTripData() {
       checklists: current.checklists.map((list) =>
         list.id !== listId
           ? list
+          : (() => {
+              const items = list.items.map((item) =>
+                item.id === itemId ? { ...item, done: !item.done } : item,
+              )
+              const hasProgress = items.some((item) => item.done)
+              return {
+                ...list,
+                items,
+                startedAt: hasProgress ? (list.startedAt ?? new Date().toISOString()) : undefined,
+              }
+            })(),
+      ),
+    }))
+  }, [])
+
+  const updateChecklist = useCallback((listId: string, title: string) => {
+    const trimmed = title.trim()
+    if (!trimmed) return
+    updateTrip((current) => ({
+      ...current,
+      checklists: current.checklists.map((list) =>
+        list.id === listId ? { ...list, title: trimmed } : list,
+      ),
+    }))
+  }, [])
+
+  const updateChecklistItem = useCallback((listId: string, itemId: string, text: string) => {
+    const trimmed = text.trim()
+    if (!trimmed) return
+    updateTrip((current) => ({
+      ...current,
+      checklists: current.checklists.map((list) =>
+        list.id !== listId
+          ? list
           : {
               ...list,
               items: list.items.map((item) =>
-                item.id === itemId ? { ...item, done: !item.done } : item,
+                item.id === itemId ? { ...item, text: trimmed } : item,
               ),
             },
       ),
+    }))
+  }, [])
+
+  const deleteChecklistItem = useCallback((listId: string, itemId: string) => {
+    updateTrip((current) => ({
+      ...current,
+      checklists: current.checklists.map((list) => {
+        if (list.id !== listId) return list
+        const items = list.items.filter((item) => item.id !== itemId)
+        return {
+          ...list,
+          items,
+          startedAt: items.some((item) => item.done) ? list.startedAt : undefined,
+        }
+      }),
+    }))
+  }, [])
+
+  const resetChecklist = useCallback((listId: string) => {
+    updateTrip((current) => ({
+      ...current,
+      checklists: current.checklists.map((list) =>
+        list.id === listId
+          ? {
+              ...list,
+              startedAt: undefined,
+              items: list.items.map((item) => ({ ...item, done: false })),
+            }
+          : list,
+      ),
+    }))
+  }, [])
+
+  const resetExpiredChecklists = useCallback((now = Date.now()) => {
+    updateTrip((current) => ({
+      ...current,
+      checklists: current.checklists.map((list) => {
+        const hasPartialProgress =
+          list.items.some((item) => item.done) && list.items.some((item) => !item.done)
+        const started = list.startedAt ? Date.parse(list.startedAt) : Number.NaN
+        if (!hasPartialProgress || (Number.isFinite(started) && now - started < 15 * 60_000)) {
+          return list
+        }
+        return {
+          ...list,
+          startedAt: undefined,
+          items: list.items.map((item) => ({ ...item, done: false })),
+        }
+      }),
     }))
   }, [])
 
@@ -113,6 +242,18 @@ export function useTripData() {
     }))
   }, [])
 
+  const updateNote = useCallback(
+    (noteId: string, patch: Omit<HowToNote, 'id' | 'createdAt'>) => {
+      updateTrip((current) => ({
+        ...current,
+        notes: current.notes.map((note) =>
+          note.id === noteId ? { ...note, ...patch } : note,
+        ),
+      }))
+    },
+    [],
+  )
+
   const deleteNote = useCallback((noteId: string) => {
     updateTrip((current) => ({
       ...current,
@@ -120,21 +261,57 @@ export function useTripData() {
     }))
   }, [])
 
-  const addShopItem = useCallback((scope: ShopScope, text: string) => {
+  const addShopItem = useCallback((scope: ShopScope, text: string, categoryId: string) => {
     const trimmed = text.trim()
-    if (!trimmed) return
+    if (!trimmed || !categoryId) return
     updateTrip((current) =>
       withShopItems(current, scope, (items) => [
+        {
+          id: newId(),
+          text: trimmed,
+          done: false,
+          createdAt: new Date().toISOString(),
+          categoryId,
+        },
         ...items,
-        { id: newId(), text: trimmed, done: false, createdAt: new Date().toISOString() },
       ]),
     )
   }, [])
 
-  const toggleShopItem = useCallback((scope: ShopScope, itemId: string) => {
+  const addShopCategory = useCallback((scope: ShopScope, title: string) => {
+    const trimmed = title.trim()
+    if (!trimmed) return null
+    const category: ShopCategory = {
+      id: newId(),
+      title: trimmed,
+      createdAt: new Date().toISOString(),
+    }
+    updateTrip((current) =>
+      withShopBoard(current, scope, (board) => ({
+        ...board,
+        categories: [...board.categories, category],
+      })),
+    )
+    return category
+  }, [])
+
+  const deleteShopCategory = useCallback((scope: ShopScope, categoryId: string) => {
+    updateTrip((current) =>
+      withShopBoard(current, scope, (board) => ({
+        categories: board.categories.filter((category) => category.id !== categoryId),
+        items: board.items.filter((item) => item.categoryId !== categoryId),
+      })),
+    )
+  }, [])
+
+  const toggleShopItem = useCallback((scope: ShopScope, itemId: string, doneBy?: string) => {
     updateTrip((current) =>
       withShopItems(current, scope, (items) =>
-        items.map((item) => (item.id === itemId ? { ...item, done: !item.done } : item)),
+        items.map((item) => {
+          if (item.id !== itemId) return item
+          if (item.done) return { ...item, done: false, doneBy: undefined }
+          return { ...item, done: true, doneBy: doneBy?.trim() || undefined }
+        }),
       ),
     )
   }, [])
@@ -151,6 +328,7 @@ export function useTripData() {
       title: title.trim(),
       memberIds: [...new Set(memberIds)],
       items: [],
+      categories: [],
       createdAt: new Date().toISOString(),
     }
     updateTrip((current) => ({
@@ -158,6 +336,13 @@ export function useTripData() {
       shopGroups: [...current.shopGroups, group],
     }))
     return group
+  }, [])
+
+  const deleteGroup = useCallback((groupId: string) => {
+    updateTrip((current) => ({
+      ...current,
+      shopGroups: current.shopGroups.filter((group) => group.id !== groupId),
+    }))
   }, [])
 
   const addDay = useCallback((date: string) => {
@@ -188,12 +373,103 @@ export function useTripData() {
     }))
   }, [])
 
+  const addBooking = useCallback((draft: Omit<Booking, 'id' | 'createdAt'>) => {
+    if (!draft.title.trim() || (draft.dayIds ?? []).length === 0) return
+    updateTrip((current) => ({
+      ...current,
+      bookings: [
+        ...(current.bookings ?? []),
+        { ...draft, id: newId(), createdAt: new Date().toISOString() },
+      ],
+    }))
+  }, [])
+
+  const updateBooking = useCallback(
+    (bookingId: string, patch: Omit<Booking, 'id' | 'createdAt'>) => {
+      if (!patch.title.trim() || (patch.dayIds ?? []).length === 0) return
+      updateTrip((current) => ({
+        ...current,
+        bookings: (current.bookings ?? []).map((booking) =>
+          booking.id === bookingId ? { ...booking, ...patch } : booking,
+        ),
+      }))
+    },
+    [],
+  )
+
+  const toggleBookingDay = useCallback((bookingId: string, dayId: string) => {
+    updateTrip((current) => ({
+      ...current,
+      bookings: (current.bookings ?? []).map((booking) => {
+        if (booking.id !== bookingId) return booking
+        const ids = booking.dayIds ?? []
+        const pinned = ids.includes(dayId)
+        if (pinned && ids.length <= 1) return booking
+        return {
+          ...booking,
+          dayIds: pinned ? ids.filter((id) => id !== dayId) : [...ids, dayId],
+        }
+      }),
+    }))
+  }, [])
+
+  const deleteBooking = useCallback((bookingId: string) => {
+    updateTrip((current) => ({
+      ...current,
+      bookings: (current.bookings ?? []).filter((booking) => booking.id !== bookingId),
+    }))
+  }, [])
+
   const deleteDay = useCallback((dayId: string) => {
     updateTrip((current) => ({
       ...current,
       days: current.days.filter((day) => day.id !== dayId),
+      bookings: (current.bookings ?? []).map((booking) => ({
+        ...booking,
+        dayIds: (booking.dayIds ?? []).filter((id) => id !== dayId),
+      })),
     }))
   }, [])
+
+  const updatePlace = useCallback(
+    (dayId: string, placeId: string, patch: Pick<PlanPlace, 'name' | 'notes'>) => {
+      const name = patch.name.trim()
+      if (!name) return
+      updateTrip((current) => ({
+        ...current,
+        days: current.days.map((day) =>
+          day.id !== dayId
+            ? day
+            : {
+                ...day,
+                places: day.places.map((place) =>
+                  place.id === placeId ? { ...place, name, notes: patch.notes } : place,
+                ),
+              },
+        ),
+      }))
+    },
+    [],
+  )
+
+  const movePlace = useCallback(
+    (dayId: string, placeId: string, direction: 'up' | 'down') => {
+      updateTrip((current) => ({
+        ...current,
+        days: current.days.map((day) => {
+          if (day.id !== dayId) return day
+          const index = day.places.findIndex((place) => place.id === placeId)
+          const nextIndex = direction === 'up' ? index - 1 : index + 1
+          if (index < 0 || nextIndex < 0 || nextIndex >= day.places.length) return day
+          const places = [...day.places]
+          const [place] = places.splice(index, 1)
+          places.splice(nextIndex, 0, place)
+          return { ...day, places }
+        }),
+      }))
+    },
+    [],
+  )
 
   const deletePlace = useCallback((dayId: string, placeId: string) => {
     updateTrip((current) => ({
@@ -210,16 +486,31 @@ export function useTripData() {
     ...data,
     addChecklist,
     toggleChecklistItem,
+    updateChecklist,
+    updateChecklistItem,
+    deleteChecklistItem,
+    resetChecklist,
+    resetExpiredChecklists,
     addChecklistStep,
     deleteChecklist,
     addNote,
+    updateNote,
     deleteNote,
     addShopItem,
+    addShopCategory,
+    deleteShopCategory,
     toggleShopItem,
     deleteShopItem,
     addGroup,
+    deleteGroup,
     addDay,
     addPlace,
+    updatePlace,
+    movePlace,
+    addBooking,
+    updateBooking,
+    toggleBookingDay,
+    deleteBooking,
     deleteDay,
     deletePlace,
   }
@@ -236,11 +527,12 @@ export function formatDayDate(isoDate: string) {
   if (!isoDate) return ''
   const [year, month, day] = isoDate.split('-').map(Number)
   const date = new Date(year, (month ?? 1) - 1, day ?? 1)
-  return date.toLocaleDateString(undefined, {
+  const label = date.toLocaleDateString(undefined, {
     weekday: 'short',
     month: 'short',
     day: 'numeric',
   })
+  return isoDate === todayInputValue() ? `${label} (TODAY)` : label
 }
 
 export function sortDays(days: PlanDay[]) {
@@ -249,6 +541,50 @@ export function sortDays(days: PlanDay[]) {
     if (byDate !== 0) return byDate
     return left.createdAt.localeCompare(right.createdAt)
   })
+}
+
+export function formatShortDate(isoDate: string) {
+  if (!isoDate) return ''
+  const [year, month, day] = isoDate.split('-').map(Number)
+  const date = new Date(year, (month ?? 1) - 1, day ?? 1)
+  return date.toLocaleDateString(undefined, {
+    month: 'short',
+    day: 'numeric',
+  })
+}
+
+export function formatDateRange(startDate: string, endDate: string) {
+  if (startDate && endDate && startDate !== endDate) {
+    return `${formatShortDate(startDate)} – ${formatShortDate(endDate)}`
+  }
+  return formatShortDate(startDate || endDate)
+}
+
+export function bookingDayDates(booking: Booking, days: PlanDay[]) {
+  const ids = new Set(booking.dayIds ?? [])
+  return sortDays(days.filter((day) => ids.has(day.id))).map((day) => day.date)
+}
+
+export function formatBookingDays(booking: Booking, days: PlanDay[]) {
+  const dates = bookingDayDates(booking, days)
+  if (dates.length === 0) return formatDateRange(booking.startDate, booking.endDate)
+  if (dates.length === 1) return formatShortDate(dates[0])
+  if (dates.length === 2) return `${formatShortDate(dates[0])} · ${formatShortDate(dates[1])}`
+  return `${formatShortDate(dates[0])} – ${formatShortDate(dates[dates.length - 1])}`
+}
+
+export function sortBookings(bookings: Booking[], days: PlanDay[] = []) {
+  return [...bookings].sort((left, right) => {
+    const leftDate = bookingDayDates(left, days)[0] || left.startDate || '9999'
+    const rightDate = bookingDayDates(right, days)[0] || right.startDate || '9999'
+    const byDate = leftDate.localeCompare(rightDate)
+    if (byDate !== 0) return byDate
+    return left.createdAt.localeCompare(right.createdAt)
+  })
+}
+
+export function sortCategories(categories: ShopCategory[]) {
+  return [...categories].sort((left, right) => left.createdAt.localeCompare(right.createdAt))
 }
 
 export function parseShopScope(sub: string, personId: string): ShopScope {

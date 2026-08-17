@@ -4,20 +4,21 @@ import { fileToJpegDataUrl } from '../data/images'
 import { useTripData } from '../data/trip'
 import { parseYouTubeId, youtubeThumbUrl, youtubeWatchUrl } from '../data/youtube'
 import { newId } from '../data/store'
-import type { NoteImage, NoteVideo } from '../types'
+import type { HowToNote, NoteImage, NoteVideo } from '../types'
 
 type AddNoteSheetProps = {
   onClose: () => void
+  note?: HowToNote
 }
 
-export function AddNoteSheet({ onClose }: AddNoteSheetProps) {
-  const { addNote } = useTripData()
-  const [title, setTitle] = useState('')
-  const [notes, setNotes] = useState('')
+export function AddNoteSheet({ onClose, note }: AddNoteSheetProps) {
+  const { addNote, updateNote } = useTripData()
+  const [title, setTitle] = useState(note?.title ?? '')
+  const [notes, setNotes] = useState(note?.notes ?? '')
   const [videoInput, setVideoInput] = useState('')
   const [videoError, setVideoError] = useState('')
-  const [images, setImages] = useState<NoteImage[]>([])
-  const [videos, setVideos] = useState<NoteVideo[]>([])
+  const [images, setImages] = useState<NoteImage[]>(note?.images ?? [])
+  const [videos, setVideos] = useState<NoteVideo[]>(note?.videos ?? [])
   const [busy, setBusy] = useState(false)
 
   async function onFiles(fileList: FileList | null) {
@@ -57,18 +58,20 @@ export function AddNoteSheet({ onClose }: AddNoteSheetProps) {
 
   function submit() {
     if (!title.trim()) return
-    addNote({
+    const payload = {
       title: title.trim(),
       notes: notes.trim(),
       images,
       videos,
-    })
+    }
+    if (note) updateNote(note.id, payload)
+    else addNote(payload)
     onClose()
   }
 
   return (
     <Sheet
-      title="New how-to / note"
+      title={note ? 'Edit how-to / note' : 'New how-to / note'}
       onClose={onClose}
       onSubmit={submit}
       submitLabel={busy ? 'Working…' : 'Save'}

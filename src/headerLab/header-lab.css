@@ -1,0 +1,153 @@
+.lab-body {
+  margin: 0;
+  background: #1a3329;
+}
+
+#lab-root {
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  background: var(--paper);
+  overflow: auto;
+}
+
+.lab-page {
+  padding: 1.1rem 1rem 2.5rem;
+}
+
+.lab-intro {
+  margin-bottom: 1.4rem;
+}
+
+.lab-kicker {
+  font-family: var(--display);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  color: var(--rust);
+  margin-bottom: 0.3rem;
+}
+
+.lab-intro h1 {
+  font-size: 1.6rem;
+  color: var(--forest);
+  margin-bottom: 0.4rem;
+}
+
+.lab-intro p {
+  color: var(--ink);
+  line-height: 1.45;
+}
+
+.lab-section {
+  margin-bottom: 1.6rem;
+}
+
+.lab-section h2 {
+  font-size: 1.05rem;
+  color: var(--navy);
+  margin-bottom: 0.55rem;
+}
+
+.lab-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.7rem;
+}
+
+@media (min-width: 720px) {
+  .lab-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.lab-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  text-align: left;
+  background: var(--cream);
+  border: 2px solid var(--ink);
+  padding: 0.45rem;
+  gap: 0.35rem;
+}
+
+.lab-card.is-picked {
+  outline: 3px solid var(--rust);
+  outline-offset: 2px;
+}
+
+.lab-name {
+  font-family: var(--display);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  color: var(--forest);
+}
+
+.lab-note {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.lab-banner {
+  position: relative;
+  overflow: hidden;
+  border: 2px solid var(--ink);
+}
+
+.lab-fake-chip {
+  position: absolute;
+  right: 0.45rem;
+  bottom: 0.35rem;
+  width: 1.7rem;
+  height: 1.7rem;
+  display: grid;
+  place-items: center;
+  background: var(--rust);
+  color: #fff6e8;
+  border: 2px solid var(--ink);
+  font-family: var(--display);
+  z-index: 1;
+}
+
+.lab-spin-slow {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: header-spin 6s linear infinite;
+}
+
+.lab-blink {
+  animation: header-glow 1.2s ease-in-out infinite;
+}
+
+.lab-signal {
+  transform-box: fill-box;
+  transform-origin: left center;
+  animation: header-glow 1.6s ease-in-out infinite;
+}
+
+.lab-steam path {
+  animation: header-bob 1.4s ease-in-out infinite;
+}
+
+.lab-flicker {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: lab-flicker 0.45s ease-in-out infinite;
+}
+
+@keyframes lab-flicker {
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(0.86);
+  }
+}
+
+.header-bob {
+  animation: header-bob 1.8s ease-in-out infinite;
+}

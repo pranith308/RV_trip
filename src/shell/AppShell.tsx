@@ -38,9 +38,11 @@ function saveLastSub(section: SectionId, sub: string) {
 
 export function AppShell() {
   const { current, switchTraveler } = useAuth()
-  const { shopGroups } = useTripData()
+  const { shopGroups, deleteGroup, checklists, resetExpiredChecklists } = useTripData()
   const [route, setRoute] = useState(() => parseHash(window.location.hash))
   const [composeOpen, setComposeOpen] = useState(false)
+  const [openShopCategoryId, setOpenShopCategoryId] = useState<string | null>(null)
+  const [shopCategoryOpen, setShopCategoryOpen] = useState(false)
 
   const myGroups = shopGroups.filter(
     (group) => current && group.memberIds.includes(current.id),
@@ -48,6 +50,7 @@ export function AppShell() {
   const shopExtraTabs = myGroups.map((group) => ({
     id: groupSubId(group.id),
     label: group.title,
+    deletable: true,
   }))
   const activeSub =
     route.section === 'shop' &&
@@ -60,6 +63,7 @@ export function AppShell() {
     function onHash() {
       setRoute(parseHash(window.location.hash))
       setComposeOpen(false)
+      setShopCategoryOpen(false)
     }
     window.addEventListener('hashchange', onHash)
     if (!window.location.hash) {
@@ -69,6 +73,31 @@ export function AppShell() {
     return () => window.removeEventListener('hashchange', onHash)
   }, [])
 
+  useEffect(() => {
+    setOpenShopCategoryId(null)
+    setShopCategoryOpen(false)
+  }, [activeSub])
+
+  useEffect(() => {
+    const deadlines = checklists
+      .filter(
+        (list) =>
+          list.items.some((item) => item.done) && list.items.some((item) => !item.done),
+      )
+      .map((list) => {
+        const started = list.startedAt ? Date.parse(list.startedAt) : Number.NaN
+        return Number.isFinite(started) ? started + 15 * 60_000 : Date.now()
+      })
+    if (deadlines.length === 0) return
+
+    const delay = Math.max(0, Math.min(...deadlines) - Date.now())
+    const timer = window.setTimeout(
+      () => resetExpiredChecklists(),
+      Math.min(delay + 50, 2_147_483_647),
+    )
+    return () => window.clearTimeout(timer)
+  }, [checklists, resetExpiredChecklists])
+
   function go(section: SectionId, sub: string) {
     saveLastSub(section, sub)
     setComposeOpen(false)
@@ -76,15 +105,17 @@ export function AppShell() {
   }
 
   function selectSection(section: SectionId) {
+    if (section === 'shop') {
+      go('shop', 'everyone')
+      return
+    }
+    if (section === 'plan') {
+      go('plan', 'days')
+      return
+    }
     const remembered = loadLastSubs()[section]
-    const extraOk =
-      section === 'shop' &&
-      remembered &&
-      shopExtraTabs.some((tab) => tab.id === remembered)
     const sub =
-      remembered && (isSubOf(section, remembered) || extraOk)
-        ? remembered
-        : defaultSub(section)
+      remembered && isSubOf(section, remembered) ? remembered : defaultSub(section)
     go(section, sub)
   }
 
@@ -94,10 +125,9 @@ export function AppShell() {
   return (
     <div className="shell">
       <header className="shell-header">
-        <Mountains variant="strip" />
+        <Mountains variant="strip" scene={route.section} />
         <div className="shell-header-copy">
-          <p className="shell-kicker">{sectionMeta.fullLabel}</p>
-          <h1 className="shell-title">Family Expedition</h1>
+          <h1 className="shell-title">{sectionMeta.label}</h1>
         </div>
         {current && (
           <button
@@ -117,12 +147,23 @@ export function AppShell() {
 
       <TopNav section={route.section} onSelect={selectSection} />
 
-      <main className="shell-main">
+      <main className="shell-main" data-section={route.section}>
         {route.section === 'plan' && (
-          <PlanSection composeOpen={composeOpen} onCloseCompose={() => setComposeOpen(false)} />
+          <PlanSection
+            sub={route.sub}
+            composeOpen={composeOpen}
+            onCloseCompose={() => setComposeOpen(false)}
+          />
         )}
         {route.section === 'shop' && current && (
-          <ShopSection sub={activeSub} personId={current.id} />
+          <ShopSection
+            sub={activeSub}
+            personId={current.id}
+            openCategoryId={openShopCategoryId}
+            onOpenCategory={setOpenShopCategoryId}
+            categoryComposeOpen={shopCategoryOpen}
+            onCloseCategoryCompose={() => setShopCategoryOpen(false)}
+          />
         )}
         {route.section === 'rv' && (
           <RvSection
@@ -136,8 +177,8 @@ export function AppShell() {
 
       <div className="dock">
         {route.section === 'plan' && (
-          <button type="button" className="create-bar is-solo" onClick={() => setComposeOpen(true)}>
-            + Add day
+          <button type="button" className="create-bar" onClick={() => setComposeOpen(true)}>
+            {route.sub === 'bookings' ? '+ Add booking' : '+ Add day'}
           </button>
         )}
         {route.section === 'rv' && (
@@ -146,15 +187,36 @@ export function AppShell() {
           </button>
         )}
         {route.section === 'shop' && current && (
-          <div className="dock-composer">
-            <ShopComposer sub={activeSub} personId={personId} />
-          </div>
+          <>
+            <div className="dock-composer">
+              <ShopComposer
+                sub={activeSub}
+                personId={personId}
+                categoryId={openShopCategoryId}
+              />
+            </div>
+            <button
+              type="button"
+              className="create-bar"
+              onClick={() => setShopCategoryOpen(true)}
+            >
+              + Add category
+            </button>
+          </>
         )}
         <BottomNav
           section={route.section}
           sub={route.section === 'shop' ? activeSub : route.sub}
           extraTabs={route.section === 'shop' ? shopExtraTabs : []}
+          tabLabels={
+            current ? { me: `${current.name}'s List` } : undefined
+          }
           onSelect={(sub) => go(route.section, sub)}
+          onDeleteTab={(sub) => {
+            if (!sub.startsWith('g-')) return
+            deleteGroup(sub.slice(2))
+            if (activeSub === sub) go('shop', 'everyone')
+          }}
           onCornerAdd={() => setComposeOpen(true)}
         />
       </div>

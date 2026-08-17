@@ -1,15 +1,22 @@
 {
-  "name": "The Family Expedition",
-  "short_name": "Expedition",
+  "name": "A Family Trip",
+  "short_name": "A Family Trip",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f4e4c1",
-  "theme_color": "#2c4a3e",
+  "background_color": "#e8d5b5",
+  "theme_color": "#e8d5b5",
   "icons": [
     {
       "src": "/favicon.svg",
       "sizes": "any",
-      "type": "image/svg+xml"
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
     }
   ]
 }

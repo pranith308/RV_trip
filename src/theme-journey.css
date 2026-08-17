@@ -1,0 +1,513 @@
+/* The Journey theme. Active only while <html data-theme="journey"> is set. */
+
+[data-theme='journey'] {
+  --paper: #e8d5b5;
+  --paper-deep: #d7b48a;
+  --cream: #f6ead2;
+  --ink: #3b3428;
+  --muted: #8a7457;
+  --line: #d3c3a4;
+  --display: 'Nunito', 'Segoe UI', sans-serif;
+  --serif: 'Patrick Hand', 'Segoe UI', sans-serif;
+  --sans: 'Nunito', 'Segoe UI', sans-serif;
+  --script: 'Caveat', cursive;
+}
+
+[data-theme='journey'] #root {
+  box-shadow: 0 0 0 1px #cbbba0, 0 18px 50px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme='journey'] #root::before {
+  opacity: 0.09;
+}
+
+/* Header: paper strip with a taped kraft label */
+[data-theme='journey'] .shell-header {
+  background: var(--paper);
+  color: var(--ink);
+  border-bottom: 1px solid var(--line);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='190' height='40' viewBox='0 0 190 40'><path d='M6 30 C40 12 78 34 120 14' fill='none' stroke='%238a6a3a' stroke-width='1.1' stroke-dasharray='3 4'/><path d='M120 10 L127 18 L118 20 Z' fill='%23c4471a'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 0.6rem center;
+}
+
+[data-theme='journey'] .mountains-strip > *:not(rect) {
+  display: none;
+}
+
+[data-theme='journey'] .mountains-strip rect {
+  fill: transparent;
+}
+
+[data-theme='journey'] .shell-header-copy {
+  left: 0.9rem;
+  bottom: 0.5rem;
+  min-width: 7rem;
+  text-align: center;
+  padding: 0.22rem 1rem 0.3rem;
+  background: #d9b892;
+  border: 1px solid #c19f78;
+  border-radius: 0.2rem;
+  transform: rotate(-2.5deg);
+  text-shadow: none;
+  box-shadow: 0 6px 14px rgba(80, 50, 20, 0.12);
+}
+
+[data-theme='journey'] .shell-header-copy::before,
+[data-theme='journey'] .shell-header-copy::after {
+  content: '';
+  position: absolute;
+  width: 1.85rem;
+  height: 0.72rem;
+  background: rgba(185, 201, 180, 0.7);
+}
+
+[data-theme='journey'] .shell-header-copy::before {
+  top: -0.32rem;
+  left: -0.3rem;
+  transform: rotate(-8deg);
+}
+
+[data-theme='journey'] .shell-header-copy::after {
+  top: -0.28rem;
+  right: -0.32rem;
+  transform: rotate(6deg);
+}
+
+[data-theme='journey'] .shell-title {
+  font-family: var(--script);
+  text-transform: none;
+  letter-spacing: 0.01em;
+  font-size: 1.55rem;
+  line-height: 1.05;
+  color: #3d2c18;
+}
+
+[data-theme='journey'] .traveler-chip {
+  background: rgba(251, 246, 232, 0.95);
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+}
+
+[data-theme='journey'] .traveler-mark {
+  border-radius: 0.25rem;
+}
+
+[data-theme='journey'] .traveler-name {
+  font-family: var(--display);
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  font-size: 0.8rem;
+}
+
+/* Tab bars sit on paper instead of dark blocks */
+[data-theme='journey'] .top-nav {
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+}
+
+[data-theme='journey'] .bottom-nav {
+  background: var(--paper);
+  border-top: 1px solid var(--line);
+}
+
+[data-theme='journey'] .top-nav-btn,
+[data-theme='journey'] .bottom-nav-btn {
+  color: #6d6049;
+  font-family: var(--display);
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  font-size: 0.67rem;
+}
+
+[data-theme='journey'] .top-nav-btn.is-active,
+[data-theme='journey'] .bottom-nav-btn.is-active {
+  color: var(--forest);
+  background: transparent;
+}
+
+[data-theme='journey'] .top-nav-btn.is-active::after,
+[data-theme='journey'] .bottom-nav-btn.is-active::after {
+  height: 2px;
+  background: var(--rust);
+  left: 8%;
+  right: 8%;
+}
+
+/* Bottom tabs read as tabs: hairline dividers and a lifted active tab */
+[data-theme='journey'] .bottom-nav-btn {
+  border-right: 1px solid #ddd0b6;
+  margin: 0.28rem 0 0;
+  border-radius: 0.5rem 0.5rem 0 0;
+}
+
+[data-theme='journey'] .bottom-nav-btn:last-of-type {
+  border-right: 0;
+}
+
+[data-theme='journey'] .bottom-nav-btn.is-active {
+  background: var(--cream);
+  border-right-color: transparent;
+  box-shadow:
+    inset 0 1px 0 #efe0c2,
+    0 -1px 6px rgba(90, 60, 25, 0.07);
+}
+
+[data-theme='journey'] .bottom-nav-btn.is-active + .bottom-nav-btn {
+  border-left: 1px solid transparent;
+}
+
+[data-theme='journey'] .bottom-nav-add {
+  background: var(--rust);
+  border-left: 1px solid var(--line);
+  font-family: var(--display);
+  font-weight: 600;
+}
+
+[data-theme='journey'] .dock-composer {
+  background: var(--paper);
+  border-top: 1px solid var(--line);
+}
+
+[data-theme='journey'] .create-bar {
+  display: block;
+  width: calc(100% - 1rem);
+  margin: 0.45rem auto 0.5rem;
+  padding: 0 0.9rem;
+  min-height: 2.75rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--rust);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 0.88rem;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  box-shadow: 0 6px 14px rgba(120, 50, 20, 0.18);
+}
+
+[data-theme='journey'] .create-bar.is-solo {
+  margin-bottom: calc(0.5rem + env(safe-area-inset-bottom));
+  padding-bottom: 0;
+}
+
+/* Cards and rows: rounded paper with a soft stacked edge */
+[data-theme='journey'] .card,
+[data-theme='journey'] .shop-row,
+[data-theme='journey'] .day-card,
+[data-theme='journey'] .empty-poster {
+  border: 1px solid var(--line);
+  border-radius: 0.85rem;
+  background: var(--cream);
+  box-shadow:
+    0 6px 0 var(--paper-deep),
+    0 8px 16px rgba(80, 50, 20, 0.07);
+}
+
+[data-theme='journey'] .shop-cat-list .shop-row {
+  background: #fffaf0;
+  box-shadow: 0 3px 0 #e3d0ae;
+}
+
+[data-theme='journey'] .card-summary,
+[data-theme='journey'] .day-heading {
+  font-family: var(--serif);
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0.01em;
+}
+
+[data-theme='journey'] .card-summary {
+  font-size: 1.14rem;
+}
+
+[data-theme='journey'] .day-heading {
+  font-size: 1.22rem;
+  color: var(--ink);
+}
+
+[data-theme='journey'] .card-summary::before {
+  color: var(--muted);
+}
+
+[data-theme='journey'] .shop-text {
+  font-family: var(--serif);
+  font-size: 1.12rem;
+}
+
+[data-theme='journey'] .shop-by {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 0.74rem;
+}
+
+[data-theme='journey'] .tick-btn {
+  border: 1.5px solid var(--forest);
+}
+
+[data-theme='journey'] .done-group {
+  border-top: 1px dashed var(--paper-deep);
+}
+
+[data-theme='journey'] .done-group summary,
+[data-theme='journey'] .field-label,
+[data-theme='journey'] .empty-kicker,
+[data-theme='journey'] .day-card-label {
+  font-family: var(--display);
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  font-size: 0.76rem;
+}
+
+[data-theme='journey'] .day-card-num,
+[data-theme='journey'] .booking-code {
+  font-family: var(--serif);
+}
+
+[data-theme='journey'] .mini-btn {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--cream);
+  font-family: var(--display);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+[data-theme='journey'] .mini-btn.is-solid,
+[data-theme='journey'] .mini-btn.is-solid:disabled {
+  background: var(--rust);
+  border-color: var(--rust);
+}
+
+[data-theme='journey'] .field {
+  border: 1px solid var(--line);
+  border-radius: 0.7rem;
+}
+
+[data-theme='journey'] .field:focus {
+  outline: 2px solid var(--ochre);
+}
+
+[data-theme='journey'] .sheet-card {
+  border-top: 1px solid var(--line);
+  border-radius: 1.1rem 1.1rem 0 0;
+}
+
+[data-theme='journey'] .sheet-head h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  font-size: 1.3rem;
+}
+
+[data-theme='journey'] .primary-btn {
+  border-radius: 999px;
+  font-family: var(--display);
+  font-weight: 700;
+}
+
+/* Background sketch behind the list, one drawing per main tab. */
+[data-theme='journey'] .shell-main {
+  background-repeat: no-repeat;
+  background-position: right 0.7rem bottom 0.9rem;
+  background-size: 200px auto;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='210' height='120' viewBox='0 0 210 120'><g fill='none' stroke='%23b2946a' stroke-width='1.6' stroke-linejoin='round' stroke-linecap='round'><path d='M16 88 V52 C16 46 20 42 26 42 H118 L140 60 H168 C174 60 178 64 178 70 V88 Z'/><path d='M34 52 H74 V72 H34 Z'/><path d='M86 52 H112 V72 H86 Z'/><path d='M126 56 L140 68 H162 L146 56 Z'/><path d='M16 40 H88 M88 40 L100 30'/><path d='M58 36 H78 V42 H58 Z'/><circle cx='52' cy='90' r='10'/><circle cx='152' cy='90' r='10'/><path d='M10 92 H190'/></g></svg>");
+}
+
+/* Plan: folded map with route and traveler pins */
+[data-theme='journey'] .shell-main[data-section='plan'] {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='210' height='130' viewBox='0 0 210 130'><g fill='none' stroke='%23b2946a' stroke-width='1.6' stroke-linejoin='round' stroke-linecap='round'><path d='M12 112 V32 L74 20 L138 36 L198 22 V102 L138 116 L74 100 Z'/><path d='M74 20 V100 M138 36 V116'/><path d='M26 74 C58 58 96 88 152 64' stroke-dasharray='5 6'/><path d='M44 76 C44 76 38 66 38 60 A6 6 0 0 1 50 60 C50 66 44 76 44 76 Z'/><circle cx='44' cy='60' r='2.2'/><path d='M108 90 C108 90 102 80 102 74 A6 6 0 0 1 114 74 C114 80 108 90 108 90 Z'/><circle cx='108' cy='74' r='2.2'/><path d='M170 68 C170 68 164 58 164 52 A6 6 0 0 1 176 52 C176 58 170 68 170 68 Z'/><circle cx='170' cy='52' r='2.2'/></g></svg>");
+  background-size: 205px auto;
+}
+
+/* Shopping list: cart with a few groceries */
+[data-theme='journey'] .shell-main[data-section='shop'] {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='210' height='120' viewBox='0 0 210 120'><g fill='none' stroke='%23b2946a' stroke-width='1.6' stroke-linejoin='round' stroke-linecap='round'><path d='M10 24 H28 L46 84 H136'/><path d='M40 40 H156 L140 76 H54 Z'/><path d='M66 40 L71 76 M92 40 L95 76 M118 40 L117 76 M144 40 L139 76'/><path d='M46 58 H148'/><circle cx='64' cy='96' r='8'/><circle cx='126' cy='96' r='8'/><circle cx='74' cy='26' r='9'/><path d='M74 17 C78 11 85 12 85 18'/><path d='M108 14 H124 V36 H108 Z M112 8 H120 V14 H112 Z'/><path d='M8 104 H190'/></g></svg>");
+  background-size: 200px auto;
+}
+
+/* RV: the camper */
+[data-theme='journey'] .shell-main[data-section='rv'] {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='210' height='120' viewBox='0 0 210 120'><g fill='none' stroke='%23b2946a' stroke-width='1.6' stroke-linejoin='round' stroke-linecap='round'><path d='M16 88 V52 C16 46 20 42 26 42 H118 L140 60 H168 C174 60 178 64 178 70 V88 Z'/><path d='M34 52 H74 V72 H34 Z'/><path d='M86 52 H112 V72 H86 Z'/><path d='M126 56 L140 68 H162 L146 56 Z'/><path d='M16 40 H88 M88 40 L100 30'/><path d='M58 36 H78 V42 H58 Z'/><circle cx='52' cy='90' r='10'/><circle cx='152' cy='90' r='10'/><path d='M10 92 H190'/></g></svg>");
+}
+
+/* Location: compass rose */
+[data-theme='journey'] .shell-main[data-section='location'] {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'><g fill='none' stroke='%23b2946a' stroke-width='1.6' stroke-linejoin='round' stroke-linecap='round'><circle cx='80' cy='80' r='58'/><circle cx='80' cy='80' r='48'/><path d='M80 34 L94 80 L80 126 L66 80 Z'/><path d='M34 80 H126'/><path d='M80 22 V30 M80 130 V138 M22 80 H30 M130 80 H138'/><path d='M46 46 L52 52 M114 114 L108 108 M114 46 L108 52 M46 114 L52 108'/></g></svg>");
+  background-size: 150px auto;
+  background-position: right 0.9rem bottom 1.1rem;
+}
+
+/* Manual overrides from the dev switcher: same drawing on every tab */
+[data-theme='journey'][data-sketch='camper'] .shell-main {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='210' height='120' viewBox='0 0 210 120'><g fill='none' stroke='%23b2946a' stroke-width='1.6' stroke-linejoin='round' stroke-linecap='round'><path d='M16 88 V52 C16 46 20 42 26 42 H118 L140 60 H168 C174 60 178 64 178 70 V88 Z'/><path d='M34 52 H74 V72 H34 Z'/><path d='M86 52 H112 V72 H86 Z'/><path d='M126 56 L140 68 H162 L146 56 Z'/><path d='M16 40 H88 M88 40 L100 30'/><path d='M58 36 H78 V42 H58 Z'/><circle cx='52' cy='90' r='10'/><circle cx='152' cy='90' r='10'/><path d='M10 92 H190'/></g></svg>");
+  background-position: right 0.7rem bottom 0.9rem;
+  background-size: 200px auto;
+}
+
+[data-theme='journey'][data-sketch='ridge'] .shell-main {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='150' viewBox='0 0 400 150'><g fill='none' stroke='%23c2a67c' stroke-width='1.5' stroke-linejoin='round'><path d='M0 140 L46 68 L78 100 L122 44 L166 96 L206 62 L248 104 L300 52 L344 98 L378 76 L400 100'/><path d='M108 58 L122 44 L136 58 M290 66 L300 52 L312 68'/><path d='M0 148 H400'/><path d='M40 132 L48 118 L56 132 M70 134 L78 116 L86 134'/></g></svg>");
+  background-position: center bottom 0.2rem;
+  background-size: 100% auto;
+}
+
+[data-theme='journey'][data-sketch='camp'] .shell-main {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='230' height='140' viewBox='0 0 230 140'><g fill='none' stroke='%23b2946a' stroke-width='1.6' stroke-linejoin='round' stroke-linecap='round'><path d='M20 116 L64 40 L108 116 Z M64 40 V116'/><path d='M52 116 C56 96 72 96 76 116'/><path d='M150 116 L166 78 L182 116 Z M156 96 L166 74 L176 96'/><path d='M166 116 V126'/><path d='M196 116 L208 88 L220 116 Z'/><path d='M124 122 C128 110 136 112 134 122 M130 126 C134 112 142 116 140 126'/><path d='M8 130 H222'/></g></svg>");
+  background-position: right 0.5rem bottom 0.7rem;
+  background-size: 215px auto;
+}
+
+[data-theme='journey'][data-sketch='road'] .shell-main {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='520' viewBox='0 0 220 520' preserveAspectRatio='none'><g fill='none' stroke='%23c2a67c' stroke-width='1.6' stroke-linejoin='round'><path d='M132 0 C58 90 178 170 106 270 S44 390 138 520' stroke-dasharray='9 11'/><path d='M18 430 L30 400 L42 430 Z M28 452 L40 422 L52 452 Z'/><path d='M182 336 L194 306 L206 336 Z'/><path d='M8 486 H212'/></g></svg>");
+  background-position: center center;
+  background-size: 100% 100%;
+}
+
+[data-theme='journey'][data-sketch='map'] .shell-main {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'><g fill='none' stroke='%23cdb28c' stroke-width='1' opacity='0.75'><ellipse cx='60' cy='60' rx='52' ry='30'/><ellipse cx='60' cy='60' rx='34' ry='18'/><ellipse cx='60' cy='60' rx='16' ry='8'/><ellipse cx='158' cy='150' rx='56' ry='34'/><ellipse cx='158' cy='150' rx='34' ry='18'/><path d='M0 120 C50 100 90 150 200 120' stroke-dasharray='7 7' stroke='%23d6a98c'/></g></svg>");
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  background-position: left top;
+}
+
+[data-theme='journey'][data-sketch='none'] .shell-main {
+  background-image: none;
+}
+
+/* Traveler gate: paper card with a scene up top and a campsite along the bottom */
+[data-theme='journey'] .gate {
+  padding: 0.9rem 0.9rem calc(0.6rem + env(safe-area-inset-bottom));
+}
+
+[data-theme='journey'] .poster-frame {
+  flex: 0 1 auto;
+  padding: 0.9rem 0.95rem 1rem;
+  border: 1px solid var(--line);
+  outline: 0;
+  border-radius: 1.1rem;
+  background: var(--cream);
+  box-shadow:
+    0 6px 0 var(--paper-deep),
+    0 10px 22px rgba(80, 50, 20, 0.12);
+}
+
+[data-theme='journey'] .gate-poster {
+  margin: 0;
+}
+
+[data-theme='journey'] .poster-kicker {
+  margin-bottom: 0.5rem;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+}
+
+[data-theme='journey'] .mountains-hero,
+[data-theme='journey'] .poster-rule {
+  display: none;
+}
+
+[data-theme='journey'] .gate-scene {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0.1rem 0 0.4rem;
+}
+
+[data-theme='journey'] .poster-title {
+  align-self: center;
+  margin: 0.15rem 0 0;
+  padding: 0.1rem 1rem 0.2rem;
+  border: 1px solid #c19f78;
+  border-radius: 0.2rem;
+  background: #d9b892;
+  font-family: var(--script);
+  font-size: 2.05rem;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  color: #3d2c18;
+  transform: rotate(-2deg);
+  box-shadow: 0 6px 14px rgba(80, 50, 20, 0.12);
+}
+
+[data-theme='journey'] .poster-tag {
+  margin-top: 0.35rem;
+  font-family: var(--serif);
+  font-style: normal;
+  font-size: 1.02rem;
+  letter-spacing: 0.06em;
+  color: var(--rust);
+}
+
+[data-theme='journey'] .gate-trail {
+  display: block;
+  width: 100%;
+  height: 12px;
+  margin: 0.5rem 0 0.5rem;
+}
+
+[data-theme='journey'] .gate-lead {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+}
+
+[data-theme='journey'] .roster-btn {
+  border: 1px solid var(--line);
+  border-radius: 0.8rem;
+  background: #fffaf0;
+  box-shadow: 0 3px 0 #e3d0ae;
+}
+
+[data-theme='journey'] .roster-mark {
+  border: 1px solid #c19f78;
+  border-radius: 0.35rem;
+  background: #d9b892;
+  font-family: var(--script);
+  font-size: 1.35rem;
+  color: #3d2c18;
+}
+
+[data-theme='journey'] .roster-name {
+  font-family: var(--serif);
+  font-size: 1.18rem;
+  letter-spacing: 0.01em;
+  text-transform: none;
+}
+
+[data-theme='journey'] .roster-known {
+  font-family: var(--display);
+  font-weight: 700;
+  color: var(--muted);
+}
+
+[data-theme='journey'] .gate-error {
+  font-family: var(--serif);
+  font-size: 1rem;
+}
+
+[data-theme='journey'] .gate-art {
+  display: block;
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 5.5rem;
+}
+
+[data-theme='journey'] .gate-art-garland {
+  position: absolute;
+  top: 0.35rem;
+  left: 0;
+  width: 100%;
+  height: auto;
+}
+
+[data-theme='journey'] .gate-art-scene {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { GateCamp, GateScene, GateTrail } from '../components/GateArt'
 import { Mountains } from '../components/Mountains'
 import { useAuth } from './AuthContext'
 import { PinPad } from './PinPad'
@@ -85,11 +86,13 @@ export function PinGate() {
   return (
     <div className="gate">
       <div className="poster-frame gate-poster">
-        <p className="poster-kicker">Department of Family Adventure</p>
+        <p className="poster-kicker">The Family Expedition</p>
         <Mountains variant="hero" />
-        <h1 className="poster-title">The Family Expedition</h1>
-        <p className="poster-tag">A first RV journey · eight travelers</p>
+        <GateScene />
+        <h1 className="poster-title">A First RV Journey</h1>
+        <p className="poster-tag">LFG!!</p>
         <div className="poster-rule" />
+        <GateTrail />
 
         {mode === 'roster' && (
           <>
@@ -110,7 +113,7 @@ export function PinGate() {
                 </button>
               ))}
             </div>
-            <button type="button" className="text-btn" onClick={startCreate}>
+            <button type="button" className="primary-btn add-traveler-btn" onClick={startCreate}>
               + Add a traveler
             </button>
           </>
@@ -193,6 +196,7 @@ export function PinGate() {
           </div>
         )}
       </div>
+      <GateCamp />
     </div>
   )
 }
