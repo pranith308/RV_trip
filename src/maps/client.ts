@@ -84,11 +84,13 @@ const MAX_WAYPOINTS = 9
 
 export function mapsDayRouteUrl(stops: Array<{ lat: number; lng: number }>) {
   if (stops.length === 0) return null
+  const origin = stops[0]
   const destination = stops[stops.length - 1]
-  if (!destination) return null
-  const waypoints = stops.slice(0, -1).slice(0, MAX_WAYPOINTS)
+  if (!origin || !destination) return null
+  const waypoints = stops.slice(1, -1).slice(0, MAX_WAYPOINTS)
   const params = new URLSearchParams({
     api: '1',
+    origin: `${origin.lat},${origin.lng}`,
     destination: `${destination.lat},${destination.lng}`,
     travelmode: 'driving',
   })
