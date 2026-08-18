@@ -55,10 +55,45 @@ export type ShopCategory = {
   createdAt: string
 }
 
+export type PlaceWeather = {
+  date: string
+  highF: number
+  lowF: number
+  windMph: number
+  fetchedAt: string
+}
+
+export type DriveLeg = {
+  fromPlaceId: string
+  distanceMeters: number
+  durationSeconds: number
+}
+
+export type PlaceDraft = {
+  name: string
+  notes?: string
+  placeId?: string
+  address?: string
+  lat?: number
+  lng?: number
+}
+
+export type PlacePatch = Partial<PlaceDraft> & {
+  driveFromPrevious?: DriveLeg
+  clearLocation?: boolean
+  clearDrive?: boolean
+}
+
 export type PlanPlace = {
   id: string
   name: string
   notes?: string
+  placeId?: string
+  address?: string
+  lat?: number
+  lng?: number
+  driveFromPrevious?: DriveLeg
+  weather?: PlaceWeather
 }
 
 export type PlanDay = {

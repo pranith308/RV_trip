@@ -47,13 +47,19 @@ export function PinGate() {
 
     if (mode === 'unlock' && selectedId) {
       setBusy(true)
-      void unlock(selectedId, next).then((ok) => {
-        setBusy(false)
-        if (!ok) {
-          setError('That PIN is not right.')
+      void unlock(selectedId, next)
+        .then((ok) => {
+          setBusy(false)
+          if (!ok) {
+            setError('That PIN is not right.')
+            setPin('')
+          }
+        })
+        .catch(() => {
+          setBusy(false)
+          setError('Could not check that PIN. Try again.')
           setPin('')
-        }
-      })
+        })
     }
   }
 
@@ -72,15 +78,23 @@ export function PinGate() {
     }
 
     setBusy(true)
-    void createPerson(name, pin).then((message) => {
-      setBusy(false)
-      if (message) {
-        setError(message)
+    void createPerson(name, pin)
+      .then((message) => {
+        setBusy(false)
+        if (message) {
+          setError(message)
+          setPin('')
+          setConfirm('')
+          setMode('pin')
+        }
+      })
+      .catch(() => {
+        setBusy(false)
+        setError('Could not save that traveler. Try again.')
         setPin('')
         setConfirm('')
         setMode('pin')
-      }
-    })
+      })
   }
 
   return (

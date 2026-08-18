@@ -3,8 +3,10 @@ import type {
   Booking,
   ChecklistItem,
   HowToNote,
+  PlacePatch,
   PlanDay,
   PlanPlace,
+  PlaceDraft,
   ShopCategory,
   ShopGroup,
   ShopItem,
@@ -12,6 +14,44 @@ import type {
   TripData,
 } from '../types'
 import { getSnapshot, newId, subscribe, updateTrip } from './store'
+
+function withoutDrive(place: PlanPlace): PlanPlace {
+  const next = { ...place }
+  delete next.driveFromPrevious
+  return next
+}
+
+function withoutWeather(place: PlanPlace): PlanPlace {
+  const next = { ...place }
+  delete next.weather
+  return next
+}
+
+function applyPlacePatch(place: PlanPlace, patch: PlacePatch, locationChanged: boolean): PlanPlace {
+  const next: PlanPlace = { ...place }
+  if (patch.name !== undefined) next.name = patch.name.trim()
+  if (patch.notes !== undefined) next.notes = patch.notes
+  if (patch.clearLocation) {
+    delete next.placeId
+    delete next.address
+    delete next.lat
+    delete next.lng
+  } else {
+    if (patch.placeId !== undefined) next.placeId = patch.placeId
+    if (patch.address !== undefined) next.address = patch.address
+    if (patch.lat !== undefined) next.lat = patch.lat
+    if (patch.lng !== undefined) next.lng = patch.lng
+  }
+  if (patch.clearDrive || locationChanged) {
+    delete next.driveFromPrevious
+  } else if (patch.driveFromPrevious) {
+    next.driveFromPrevious = patch.driveFromPrevious
+  }
+  if (locationChanged || patch.clearLocation) {
+    delete next.weather
+  }
+  return next
+}
 
 function withShopItems(
   current: TripData,
@@ -361,10 +401,18 @@ export function useTripData() {
     }))
   }, [])
 
-  const addPlace = useCallback((dayId: string, name: string) => {
-    const trimmed = name.trim()
+  const addPlace = useCallback((dayId: string, draft: PlaceDraft) => {
+    const trimmed = draft.name.trim()
     if (!trimmed) return
-    const place: PlanPlace = { id: newId(), name: trimmed }
+    const place: PlanPlace = {
+      id: newId(),
+      name: trimmed,
+      ...(draft.notes ? { notes: draft.notes } : {}),
+      ...(draft.placeId ? { placeId: draft.placeId } : {}),
+      ...(draft.address ? { address: draft.address } : {}),
+      ...(typeof draft.lat === 'number' ? { lat: draft.lat } : {}),
+      ...(typeof draft.lng === 'number' ? { lng: draft.lng } : {}),
+    }
     updateTrip((current) => ({
       ...current,
       days: current.days.map((day) =>
@@ -431,22 +479,71 @@ export function useTripData() {
     }))
   }, [])
 
-  const updatePlace = useCallback(
-    (dayId: string, placeId: string, patch: Pick<PlanPlace, 'name' | 'notes'>) => {
-      const name = patch.name.trim()
-      if (!name) return
+  const updatePlace = useCallback((dayId: string, placeId: string, patch: PlacePatch) => {
+    if (patch.name !== undefined && !patch.name.trim()) return
+    updateTrip((current) => ({
+      ...current,
+      days: current.days.map((day) => {
+        if (day.id !== dayId) return day
+        const currentPlace = day.places.find((place) => place.id === placeId)
+        if (!currentPlace) return day
+        const locationChanged =
+          Boolean(patch.clearLocation) ||
+          (patch.placeId !== undefined && patch.placeId !== currentPlace.placeId) ||
+          (patch.lat !== undefined && patch.lat !== currentPlace.lat) ||
+          (patch.lng !== undefined && patch.lng !== currentPlace.lng)
+
+        return {
+          ...day,
+          places: day.places.map((place, index) => {
+            if (place.id === placeId) {
+              return applyPlacePatch(place, patch, locationChanged)
+            }
+            if (locationChanged && index > 0 && day.places[index - 1]?.id === placeId) {
+              return withoutDrive(place)
+            }
+            return place
+          }),
+        }
+      }),
+    }))
+  }, [])
+
+  const setPlaceDrives = useCallback(
+    (dayId: string, drives: Record<string, PlanPlace['driveFromPrevious'] | null>) => {
       updateTrip((current) => ({
         ...current,
-        days: current.days.map((day) =>
-          day.id !== dayId
-            ? day
-            : {
-                ...day,
-                places: day.places.map((place) =>
-                  place.id === placeId ? { ...place, name, notes: patch.notes } : place,
-                ),
-              },
-        ),
+        days: current.days.map((day) => {
+          if (day.id !== dayId) return day
+          return {
+            ...day,
+            places: day.places.map((place) => {
+              if (!(place.id in drives)) return place
+              const leg = drives[place.id]
+              return leg ? { ...place, driveFromPrevious: leg } : withoutDrive(place)
+            }),
+          }
+        }),
+      }))
+    },
+    [],
+  )
+
+  const setPlaceWeather = useCallback(
+    (dayId: string, weather: Record<string, PlanPlace['weather'] | null>) => {
+      updateTrip((current) => ({
+        ...current,
+        days: current.days.map((day) => {
+          if (day.id !== dayId) return day
+          return {
+            ...day,
+            places: day.places.map((place) => {
+              if (!(place.id in weather)) return place
+              const snapshot = weather[place.id]
+              return snapshot ? { ...place, weather: snapshot } : withoutWeather(place)
+            }),
+          }
+        }),
       }))
     },
     [],
@@ -506,6 +603,8 @@ export function useTripData() {
     addDay,
     addPlace,
     updatePlace,
+    setPlaceDrives,
+    setPlaceWeather,
     movePlace,
     addBooking,
     updateBooking,

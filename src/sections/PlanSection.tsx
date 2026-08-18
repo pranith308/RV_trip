@@ -1,7 +1,10 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { CommentIcon } from '../components/CommentIcon'
 import { DeletableSummary, useDeletePress } from '../components/DeleteMenu'
+import { DirectionsIcon, TurnIcon } from '../components/DirectionsIcon'
 import { LinkifiedText } from '../components/LinkifiedText'
+import { PlaceSearch } from '../components/PlaceSearch'
+import { PlaceWeatherLabel } from '../components/PlaceWeatherLabel'
 import { Sheet } from '../components/Sheet'
 import {
   formatBookingDays,
@@ -11,7 +14,15 @@ import {
   todayInputValue,
   useTripData,
 } from '../data/trip'
-import type { Booking, PlanDay, PlanPlace } from '../types'
+import {
+  formatDriveDistance,
+  formatDriveTime,
+  isMappedPlace,
+  mapsDirectionsUrl,
+} from '../maps/client'
+import { useDriveLegs } from '../maps/useDriveLegs'
+import { usePlaceWeather } from '../weather/usePlaceWeather'
+import type { Booking, PlaceDraft, PlanDay, PlanPlace } from '../types'
 import { AddBookingSheet } from './AddBookingSheet'
 
 type PlanSectionProps = {
@@ -34,10 +45,13 @@ function DaysView({
   composeOpen: boolean
   onCloseCompose: () => void
 }) {
-  const { days, bookings, addPlace, deleteDay, movePlace } = useTripData()
+  const { days, bookings, addPlace, deleteDay, movePlace, setPlaceDrives, setPlaceWeather } =
+    useTripData()
   const ordered = sortDays(days)
   const [openDayId, setOpenDayId] = useState<string | null>(null)
   const [reorderDayId, setReorderDayId] = useState<string | null>(null)
+  useDriveLegs(days, setPlaceDrives)
+  usePlaceWeather(days, setPlaceWeather)
 
   return (
     <>
@@ -101,21 +115,26 @@ function DaysView({
                     </div>
                   )}
                   <ul className="place-list">
-                    {day.places.map((place, index) => (
-                      <PlaceRow
-                        key={place.id}
-                        dayId={day.id}
-                        place={place}
-                        reorderMode={isReordering}
-                        canReorder={day.places.length > 1}
-                        canMoveUp={index > 0}
-                        canMoveDown={index < day.places.length - 1}
-                        onMove={(direction) => movePlace(day.id, place.id, direction)}
-                        onStartReorder={() => setReorderDayId(day.id)}
-                      />
-                    ))}
+                    {day.places.map((place, index) => {
+                      const previous = day.places[index - 1]
+                      return (
+                        <PlaceRow
+                          key={place.id}
+                          dayId={day.id}
+                          dayDate={day.date}
+                          place={place}
+                          previous={previous}
+                          reorderMode={isReordering}
+                          canReorder={day.places.length > 1}
+                          canMoveUp={index > 0}
+                          canMoveDown={index < day.places.length - 1}
+                          onMove={(direction) => movePlace(day.id, place.id, direction)}
+                          onStartReorder={() => setReorderDayId(day.id)}
+                        />
+                      )
+                    })}
                   </ul>
-                  <AddPlaceRow onAdd={(name) => addPlace(day.id, name)} />
+                  <AddPlaceRow onAdd={(draft) => addPlace(day.id, draft)} />
                 </details>
               </li>
             )
@@ -129,7 +148,9 @@ function DaysView({
 
 function PlaceRow({
   dayId,
+  dayDate,
   place,
+  previous,
   reorderMode,
   canReorder,
   canMoveUp,
@@ -138,7 +159,9 @@ function PlaceRow({
   onStartReorder,
 }: {
   dayId: string
+  dayDate: string
   place: PlanPlace
+  previous?: PlanPlace
   reorderMode: boolean
   canReorder: boolean
   canMoveUp: boolean
@@ -158,6 +181,14 @@ function PlaceRow({
   const [notesOverflow, setNotesOverflow] = useState(false)
   const notesRef = useRef<HTMLDivElement>(null)
   const notes = place.notes?.trim() ?? ''
+  const mapped = isMappedPlace(place)
+  const previousMapped = previous && isMappedPlace(previous)
+  const drive =
+    mapped && previousMapped && place.driveFromPrevious?.fromPlaceId === previous.placeId
+      ? place.driveFromPrevious
+      : null
+  const weatherSnapshot =
+    dayDate && mapped && place.weather?.date === dayDate ? place.weather : null
 
   useEffect(() => {
     setNotesExpanded(false)
@@ -195,7 +226,24 @@ function PlaceRow({
   }, [notes])
 
   return (
-    <li className="place-row" {...press}>
+    <li className={`place-item${drive && previous ? ' has-leg' : ''}`}>
+      {drive && previous ? (
+        <a
+          className="place-leg"
+          href={mapsDirectionsUrl({
+            lat: place.lat as number,
+            lng: place.lng as number,
+          })}
+          target="_blank"
+          rel="noreferrer"
+          onPointerDown={(event) => event.stopPropagation()}
+        >
+          {formatDriveTime(drive.durationSeconds)}
+          <TurnIcon />
+          {formatDriveDistance(drive.distanceMeters)}
+        </a>
+      ) : null}
+      <div className="place-row" {...press}>
       {reorderMode ? (
         <div className="place-move-actions">
           <button
@@ -219,7 +267,10 @@ function PlaceRow({
         </div>
       ) : null}
       <div className="place-copy">
-        <span className="place-name">{place.name}</span>
+        <div className="place-title-row">
+          <span className="place-name">{place.name}</span>
+          {weatherSnapshot ? <PlaceWeatherLabel weather={weatherSnapshot} /> : null}
+        </div>
         {notes ? (
           <div
             ref={notesRef}
@@ -242,6 +293,18 @@ function PlaceRow({
             {notesExpanded ? '▴' : '▾'}
           </button>
         ) : null}
+        {mapped ? (
+          <a
+            className="directions-btn"
+            href={mapsDirectionsUrl({ lat: place.lat as number, lng: place.lng as number })}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={`Directions to ${place.name}`}
+            onPointerDown={(event) => event.stopPropagation()}
+          >
+            <DirectionsIcon />
+          </a>
+        ) : null}
         <button
           type="button"
           className={`comment-btn${notes ? ' is-filled' : ''}`}
@@ -256,6 +319,7 @@ function PlaceRow({
       {notesOpen && (
         <PlaceNotesSheet dayId={dayId} place={place} onClose={() => setNotesOpen(false)} />
       )}
+      </div>
     </li>
   )
 }
@@ -272,13 +336,35 @@ function PlaceNotesSheet({
   const { updatePlace } = useTripData()
   const [name, setName] = useState(place.name)
   const [notes, setNotes] = useState(place.notes ?? '')
+  const [mapped, setMapped] = useState<PlaceDraft | null>(
+    isMappedPlace(place)
+      ? {
+          name: place.name,
+          placeId: place.placeId,
+          address: place.address,
+          lat: place.lat,
+          lng: place.lng,
+        }
+      : null,
+  )
 
   return (
     <Sheet
       title="Edit place"
       onClose={onClose}
       onSubmit={() => {
-        updatePlace(dayId, place.id, { name, notes })
+        updatePlace(dayId, place.id, {
+          name,
+          notes,
+          ...(mapped
+            ? {
+                placeId: mapped.placeId,
+                address: mapped.address,
+                lat: mapped.lat,
+                lng: mapped.lng,
+              }
+            : { clearLocation: true }),
+        })
         onClose()
       }}
       submitLabel="Save"
@@ -295,6 +381,22 @@ function PlaceNotesSheet({
         placeholder="Place name"
         autoFocus
       />
+      <p className="field-label">Map address</p>
+      {mapped?.address ? <p className="place-map-current">{mapped.address}</p> : (
+        <p className="place-map-current is-empty">No map pin yet. Search below.</p>
+      )}
+      <PlaceSearch
+        placeholder="Search Google Maps"
+        onPick={(next) => {
+          setMapped(next)
+          if (!name.trim()) setName(next.name)
+        }}
+      />
+      {mapped ? (
+        <button type="button" className="text-btn" onClick={() => setMapped(null)}>
+          Remove map pin
+        </button>
+      ) : null}
       <label className="field-label" htmlFor={`place-notes-${place.id}`}>
         Notes
       </label>
@@ -462,24 +564,27 @@ function contactHref(value: string) {
   return null
 }
 
-function AddPlaceRow({ onAdd }: { onAdd: (name: string) => void }) {
+function AddPlaceRow({ onAdd }: { onAdd: (draft: PlaceDraft) => void }) {
   const [name, setName] = useState('')
   return (
     <form
-      className="inline-add is-tight"
+      className="inline-add is-tight place-add"
       onSubmit={(event) => {
         event.preventDefault()
-        onAdd(name)
+        onAdd({ name })
         setName('')
       }}
     >
-      <input
-        className="field"
-        value={name}
-        onChange={(event) => setName(event.target.value)}
+      <PlaceSearch
         placeholder="Add a place"
+        value={name}
+        onQueryChange={setName}
+        onPick={(place) => {
+          onAdd(place)
+          setName('')
+        }}
       />
-      <button type="submit" className="mini-btn">
+      <button type="submit" className="mini-btn" disabled={!name.trim()}>
         Add
       </button>
     </form>

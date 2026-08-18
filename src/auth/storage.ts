@@ -1,5 +1,6 @@
 import type { Person } from '../types'
 import { newId } from '../ids'
+import { sha256Hex } from './sha256'
 
 const PEOPLE_KEY = 'expedition.people'
 const DEVICE_KEY = 'expedition.deviceId'
@@ -43,10 +44,7 @@ export function saveSessionPersonId(id: string | null): void {
 
 export async function hashPin(personId: string, pin: string): Promise<string> {
   const payload = new TextEncoder().encode(`${personId}:${pin}`)
-  const digest = await crypto.subtle.digest('SHA-256', payload)
-  return Array.from(new Uint8Array(digest), (byte) =>
-    byte.toString(16).padStart(2, '0'),
-  ).join('')
+  return sha256Hex(payload)
 }
 
 function loadTrusted(): string[] {
