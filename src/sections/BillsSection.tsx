@@ -13,9 +13,10 @@ type BillsSectionProps = {
 }
 
 export function BillsSection({ composeOpen, onCloseCompose }: BillsSectionProps) {
-  const { bills = [], addBill, deleteBill } = useTripData()
+  const { bills = [], addBill, updateBill, deleteBill } = useTripData()
   const { people } = useAuth()
   const [lightbox, setLightbox] = useState<string | null>(null)
+  const [editing, setEditing] = useState<BillExpense | null>(null)
 
   return (
     <>
@@ -28,6 +29,7 @@ export function BillsSection({ composeOpen, onCloseCompose }: BillsSectionProps)
               key={expense.id}
               expense={expense}
               people={people}
+              onEdit={() => setEditing(expense)}
               onDelete={() => deleteBill(expense.id)}
               onOpenImage={setLightbox}
             />
@@ -35,12 +37,18 @@ export function BillsSection({ composeOpen, onCloseCompose }: BillsSectionProps)
         </ul>
       )}
 
-      {composeOpen && (
+      {(composeOpen || editing) && (
         <AddExpenseSheet
           people={people}
-          onClose={onCloseCompose}
-          onSave={(expense) => {
-            addBill(expense)
+          expense={editing}
+          onClose={() => {
+            setEditing(null)
+            onCloseCompose()
+          }}
+          onSave={(draft) => {
+            if (editing) updateBill(editing.id, draft)
+            else addBill(draft)
+            setEditing(null)
             onCloseCompose()
           }}
         />
@@ -87,16 +95,18 @@ export function BillsDock() {
 function ExpenseRow({
   expense,
   people,
+  onEdit,
   onDelete,
   onOpenImage,
 }: {
   expense: BillExpense
   people: Person[]
+  onEdit: () => void
   onDelete: () => void
   onOpenImage: (src: string) => void
 }) {
   const payer = people.find((person) => person.id === expense.paidBy)?.name ?? 'Traveler'
-  const { press, menu } = useDeletePress(expense.title, onDelete)
+  const { press, menu } = useDeletePress(expense.title, onDelete, onEdit)
 
   return (
     <li className="bills-item" {...press}>
@@ -124,23 +134,29 @@ function ExpenseRow({
 
 function AddExpenseSheet({
   people,
+  expense,
   onClose,
   onSave,
 }: {
   people: Person[]
+  expense?: BillExpense | null
   onClose: () => void
   onSave: (expense: Omit<BillExpense, 'id' | 'createdAt'>) => void
 }) {
   const { current } = useAuth()
-  const [title, setTitle] = useState('')
-  const [amount, setAmount] = useState('')
-  const [paidBy, setPaidBy] = useState(current?.id ?? people[0]?.id ?? '')
-  const [splitIds, setSplitIds] = useState<string[]>(people.map((person) => person.id))
-  const [custom, setCustom] = useState(false)
-  const [ratios, setRatios] = useState<Record<string, number>>(
-    Object.fromEntries(people.map((person) => [person.id, 1])),
+  const [title, setTitle] = useState(expense?.title ?? '')
+  const [amount, setAmount] = useState(expense ? String(expense.amount) : '')
+  const [paidBy, setPaidBy] = useState(expense?.paidBy ?? current?.id ?? people[0]?.id ?? '')
+  const [splitIds, setSplitIds] = useState<string[]>(
+    expense?.splitIds ?? people.map((person) => person.id),
   )
-  const [image, setImage] = useState<string | null>(null)
+  const equalStart =
+    !expense || expense.splitIds.every((id) => (expense.ratios[id] || 1) === 1)
+  const [custom, setCustom] = useState(!equalStart)
+  const [ratios, setRatios] = useState<Record<string, number>>(
+    expense?.ratios ?? Object.fromEntries(people.map((person) => [person.id, 1])),
+  )
+  const [image, setImage] = useState<string | null>(expense?.image ?? null)
   const [imageError, setImageError] = useState('')
 
   const parsedAmount = Number.parseFloat(amount)
@@ -186,7 +202,7 @@ function AddExpenseSheet({
 
   return (
     <Sheet
-      title="Add expense"
+      title={expense ? 'Edit expense' : 'Add expense'}
       submitLabel="Save"
       onClose={onClose}
       disableSubmit={!ready}

@@ -601,6 +601,15 @@ export function useTripData() {
     }))
   }, [])
 
+  const updateBill = useCallback((billId: string, patch: Omit<BillExpense, 'id' | 'createdAt'>) => {
+    updateTrip((current) => ({
+      ...current,
+      bills: (current.bills ?? []).map((bill) =>
+        bill.id === billId ? { ...bill, ...patch } : bill,
+      ),
+    }))
+  }, [])
+
   return {
     ...data,
     addChecklist,
@@ -635,6 +644,7 @@ export function useTripData() {
     deleteDay,
     deletePlace,
     addBill,
+    updateBill,
     deleteBill,
   }
 }

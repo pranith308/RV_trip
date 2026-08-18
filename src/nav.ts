@@ -37,8 +37,8 @@ export const SECTIONS = [
   },
   {
     id: 'bills',
-    label: 'Bills',
-    fullLabel: 'Bills',
+    label: 'Expenses',
+    fullLabel: 'Expenses',
     showAdd: false,
     cornerAdd: false,
     composer: 'none',
