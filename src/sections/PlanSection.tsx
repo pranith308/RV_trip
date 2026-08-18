@@ -249,10 +249,10 @@ function PlaceRow({
       {drive && previous ? (
         <a
           className="place-leg"
-          href={mapsDirectionsUrl({
-            lat: place.lat as number,
-            lng: place.lng as number,
-          })}
+          href={mapsDirectionsUrl(
+            { lat: place.lat as number, lng: place.lng as number },
+            { lat: previous.lat as number, lng: previous.lng as number },
+          )}
           target="_blank"
           rel="noreferrer"
           onPointerDown={(event) => event.stopPropagation()}
