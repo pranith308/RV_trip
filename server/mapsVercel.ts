@@ -1,4 +1,4 @@
-import { runMapsApi } from './mapsApi'
+import { runMapsApi } from './mapsApi.js'
 
 type VercelRes = {
   status: (code: number) => VercelRes

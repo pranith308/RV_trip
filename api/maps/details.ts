@@ -1,3 +1,3 @@
-import { mapsHandler } from '../../server/mapsVercel'
+import { mapsHandler } from '../../server/mapsVercel.js'
 
 export default mapsHandler('details')

@@ -4,7 +4,7 @@ import {
   MapsRequestError,
   MapsSetupError,
   placeDetails,
-} from './mapsGoogle'
+} from './mapsGoogle.js'
 
 type MapsRoute = 'status' | 'autocomplete' | 'details' | 'route'
 
