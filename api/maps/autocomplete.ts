@@ -1,3 +1,3 @@
-import { mapsHandler } from '../../server/mapsVercel.ts'
+import { mapsHandler } from '../../server/mapsVercel'
 
 export default mapsHandler('autocomplete')

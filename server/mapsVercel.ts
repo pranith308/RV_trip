@@ -1,4 +1,4 @@
-import { runMapsApi } from './mapsApi.ts'
+import { runMapsApi } from './mapsApi'
 
 type VercelRes = {
   status: (code: number) => VercelRes
@@ -17,15 +17,16 @@ function asBody(value: unknown): Record<string, unknown> {
     : {}
 }
 
+function mapsKey() {
+  const env = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process
+    ?.env
+  return env?.GOOGLE_MAPS_API_KEY
+}
+
 export function mapsHandler(route: 'status' | 'autocomplete' | 'details' | 'route') {
   return async function handler(req: VercelReq, res: VercelRes) {
     res.setHeader('Content-Type', 'application/json')
-    const result = await runMapsApi(
-      req.method ?? 'GET',
-      route,
-      asBody(req.body),
-      process.env.GOOGLE_MAPS_API_KEY,
-    )
+    const result = await runMapsApi(req.method ?? 'GET', route, asBody(req.body), mapsKey())
     res.status(result.status).json(result.body)
   }
 }

@@ -1,4 +1,4 @@
-import type { DriveResult, MappedPlace, PlaceSuggestion } from '../src/maps/types.ts'
+import type { DriveResult, MappedPlace, PlaceSuggestion } from '../src/maps/types'
 
 type AutocompleteResponse = {
   error?: { message?: string }
