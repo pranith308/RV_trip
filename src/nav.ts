@@ -24,16 +24,13 @@ export const SECTIONS = [
     ],
   },
   {
-    id: 'rv',
-    label: 'RV',
-    fullLabel: 'The Coach',
+    id: 'location',
+    label: 'Location',
+    fullLabel: 'Location',
     showAdd: false,
     cornerAdd: false,
     composer: 'none',
-    subs: [
-      { id: 'checklists', label: 'Checklists' },
-      { id: 'notes', label: 'How-to' },
-    ],
+    subs: [] as { id: string; label: string }[],
   },
   {
     id: 'bills',
@@ -45,13 +42,16 @@ export const SECTIONS = [
     subs: [] as { id: string; label: string }[],
   },
   {
-    id: 'location',
-    label: 'Location',
-    fullLabel: 'Location',
+    id: 'rv',
+    label: 'RV',
+    fullLabel: 'The Coach',
     showAdd: false,
     cornerAdd: false,
     composer: 'none',
-    subs: [] as { id: string; label: string }[],
+    subs: [
+      { id: 'checklists', label: 'Checklists' },
+      { id: 'notes', label: 'How-to' },
+    ],
   },
 ] as const
 

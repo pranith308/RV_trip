@@ -579,11 +579,19 @@ p {
 }
 
 .top-nav {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
   background: var(--navy);
   flex-shrink: 0;
   border-bottom: 3px solid var(--ink);
+}
+
+.top-nav::-webkit-scrollbar {
+  display: none;
 }
 
 .bottom-nav {
@@ -659,6 +667,12 @@ p {
   white-space: normal;
   padding: 0.3rem 0.12rem;
   position: relative;
+}
+
+.top-nav-btn {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  padding: 0.3rem 0.75rem;
 }
 
 .top-nav-btn.is-active,
