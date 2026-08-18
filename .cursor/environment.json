@@ -1,6 +1,7 @@
 {
   "name": "RV_trip",
   "install": "npm ci",
+  "start": "if [ -n \"${GOOGLE_MAPS_API_KEY:-}\" ] && [ ! -f .env ]; then printf 'GOOGLE_MAPS_API_KEY=%s\\n' \"$GOOGLE_MAPS_API_KEY\" > .env; fi",
   "ports": [
     {
       "name": "vite",
