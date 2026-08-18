@@ -80,6 +80,27 @@ export function mapsDirectionsUrl(
   return `https://www.google.com/maps/dir/?${params.toString()}`
 }
 
+const MAX_WAYPOINTS = 9
+
+export function mapsDayRouteUrl(stops: Array<{ lat: number; lng: number }>) {
+  if (stops.length === 0) return null
+  const destination = stops[stops.length - 1]
+  if (!destination) return null
+  const waypoints = stops.slice(0, -1).slice(0, MAX_WAYPOINTS)
+  const params = new URLSearchParams({
+    api: '1',
+    destination: `${destination.lat},${destination.lng}`,
+    travelmode: 'driving',
+  })
+  if (waypoints.length > 0) {
+    params.set(
+      'waypoints',
+      waypoints.map((stop) => `${stop.lat},${stop.lng}`).join('|'),
+    )
+  }
+  return `https://www.google.com/maps/dir/?${params.toString()}`
+}
+
 export function formatDriveTime(durationSeconds: number) {
   const minutes = Math.max(1, Math.round(durationSeconds / 60))
   const hours = Math.floor(minutes / 60)

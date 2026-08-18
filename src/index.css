@@ -1095,6 +1095,16 @@ details[open] > .card-summary::before,
   text-transform: uppercase;
 }
 
+.day-route-btn {
+  width: 2rem;
+  height: 2rem;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  color: var(--muted);
+  border-radius: 0.3rem;
+}
+
 .card-summary-copy {
   flex: 1;
   min-width: 0;
@@ -1218,7 +1228,8 @@ a.booking-contact {
   text-decoration: none;
 }
 
-.place-leg-icon {
+.place-leg-icon,
+.turn-icon {
   flex-shrink: 0;
   opacity: 0.9;
 }

@@ -13,9 +13,9 @@ export function DirectionsIcon() {
   )
 }
 
-export function TurnIcon() {
+export function TurnIcon({ size = 13 }: { size?: number }) {
   return (
-    <svg className="place-leg-icon" viewBox="0 0 24 24" width="13" height="13" aria-hidden="true">
+    <svg className="turn-icon" viewBox="0 0 24 24" width={size} height={size} aria-hidden="true">
       <path
         d="M8 19 V11 A4 4 0 0 1 12 7 H18 M14.5 4 L18 7 L14.5 10"
         fill="none"

@@ -18,6 +18,7 @@ import {
   formatDriveDistance,
   formatDriveTime,
   isMappedPlace,
+  mapsDayRouteUrl,
   mapsDirectionsUrl,
 } from '../maps/client'
 import { useDriveLegs } from '../maps/useDriveLegs'
@@ -66,6 +67,11 @@ function DaysView({
             )
             const isOpen = openDayId === day.id
             const isReordering = reorderDayId === day.id
+            const mappedStops = day.places.filter(isMappedPlace).map((place) => ({
+              lat: place.lat as number,
+              lng: place.lng as number,
+            }))
+            const dayRouteUrl = mapsDayRouteUrl(mappedStops)
             return (
               <li key={day.id} className="card day-block">
                 <details
@@ -90,6 +96,19 @@ function DaysView({
                     }}
                   >
                     <h2 className="day-heading">{label}</h2>
+                    {dayRouteUrl ? (
+                      <a
+                        className="day-route-btn"
+                        href={dayRouteUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label={`Directions for ${label}`}
+                        onPointerDown={(event) => event.stopPropagation()}
+                        onClick={(event) => event.stopPropagation()}
+                      >
+                        <TurnIcon size={18} />
+                      </a>
+                    ) : null}
                   </DeletableSummary>
                   {pinned.length > 0 && (
                     <ul className="day-booking-list">
