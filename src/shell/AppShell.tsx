@@ -12,6 +12,7 @@ import {
 import { groupSubId, useTripData } from '../data/trip'
 import { LocationSection } from '../sections/LocationSection'
 import { PlanSection } from '../sections/PlanSection'
+import { BillsDock, BillsSection } from '../sections/BillsSection'
 import { RvSection } from '../sections/RvSection'
 import { AddGroupSheet } from '../sections/AddGroupSheet'
 import { ShopComposer } from '../sections/ShopComposer'
@@ -172,6 +173,12 @@ export function AppShell() {
             onCloseCompose={() => setComposeOpen(false)}
           />
         )}
+        {route.section === 'bills' && (
+          <BillsSection
+            composeOpen={composeOpen}
+            onCloseCompose={() => setComposeOpen(false)}
+          />
+        )}
         {route.section === 'location' && <LocationSection />}
       </main>
 
@@ -185,6 +192,18 @@ export function AppShell() {
           <button type="button" className="create-bar" onClick={() => setComposeOpen(true)}>
             + Create new
           </button>
+        )}
+        {route.section === 'bills' && (
+          <>
+            <BillsDock />
+            <button
+              type="button"
+              className="create-bar is-solo"
+              onClick={() => setComposeOpen(true)}
+            >
+              + Add expense
+            </button>
+          </>
         )}
         {route.section === 'shop' && current && (
           <>

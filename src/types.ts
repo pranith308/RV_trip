@@ -131,6 +131,17 @@ export type ShopScope =
   | { kind: 'me'; personId: string }
   | { kind: 'group'; groupId: string }
 
+export type BillExpense = {
+  id: string
+  title: string
+  amount: number
+  paidBy: string
+  splitIds: string[]
+  ratios: Record<string, number>
+  image: string | null
+  createdAt: string
+}
+
 export type TripData = {
   checklists: Checklist[]
   notes: HowToNote[]
@@ -141,4 +152,5 @@ export type TripData = {
   shopGroups: ShopGroup[]
   days: PlanDay[]
   bookings: Booking[]
+  bills: BillExpense[]
 }

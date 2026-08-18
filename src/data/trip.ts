@@ -1,5 +1,6 @@
 import { useCallback, useSyncExternalStore } from 'react'
 import type {
+  BillExpense,
   Booking,
   ChecklistItem,
   HowToNote,
@@ -579,6 +580,27 @@ export function useTripData() {
     }))
   }, [])
 
+  const addBill = useCallback((bill: Omit<BillExpense, 'id' | 'createdAt'>) => {
+    updateTrip((current) => ({
+      ...current,
+      bills: [
+        {
+          ...bill,
+          id: newId(),
+          createdAt: new Date().toISOString(),
+        },
+        ...(current.bills ?? []),
+      ],
+    }))
+  }, [])
+
+  const deleteBill = useCallback((billId: string) => {
+    updateTrip((current) => ({
+      ...current,
+      bills: (current.bills ?? []).filter((bill) => bill.id !== billId),
+    }))
+  }, [])
+
   return {
     ...data,
     addChecklist,
@@ -612,6 +634,8 @@ export function useTripData() {
     deleteBooking,
     deleteDay,
     deletePlace,
+    addBill,
+    deleteBill,
   }
 }
 

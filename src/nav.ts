@@ -36,6 +36,15 @@ export const SECTIONS = [
     ],
   },
   {
+    id: 'bills',
+    label: 'Bills',
+    fullLabel: 'Bills',
+    showAdd: false,
+    cornerAdd: false,
+    composer: 'none',
+    subs: [] as { id: string; label: string }[],
+  },
+  {
     id: 'location',
     label: 'Location',
     fullLabel: 'Location',

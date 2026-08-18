@@ -29,6 +29,7 @@ export function Mountains({ variant, scene = 'plan' }: MountainsProps) {
       {scene === 'plan' && <PlanArt />}
       {scene === 'shop' && <ShopArt />}
       {scene === 'rv' && <RvArt />}
+      {scene === 'bills' && <BillsArt />}
       {scene === 'location' && <LocationArt />}
     </svg>
   )
@@ -188,6 +189,29 @@ function RvArt() {
         <circle cx="96" cy="38" r="2" fill="#f4e4c1" />
         </g>
       </g>
+    </g>
+  )
+}
+
+function BillsArt() {
+  return (
+    <g className="header-scene">
+      <g transform="translate(38 16)">
+        <rect
+          x="0"
+          y="2"
+          width="42"
+          height="38"
+          rx="3"
+          fill="#fbf6e8"
+          stroke="#1c2b22"
+          strokeWidth="1.2"
+        />
+        <path d="M7 12 H35 M7 18 H30 M7 24 H33" stroke="#c4471a" strokeWidth="1.5" strokeLinecap="round" />
+      </g>
+      <circle cx="108" cy="40" r="10" fill="#c9922a" stroke="#1c2b22" strokeWidth="1.2" />
+      <circle cx="126" cy="34" r="8" fill="#e2c36a" stroke="#1c2b22" strokeWidth="1.2" />
+      <circle cx="118" cy="48" r="6" fill="#f4e4c1" stroke="#1c2b22" strokeWidth="1.2" />
     </g>
   )
 }

@@ -11,6 +11,7 @@ export const EMPTY_TRIP: TripData = {
   shopGroups: [],
   days: [],
   bookings: [],
+  bills: [],
 }
 
 export function normalizeTrip(raw: unknown): TripData {
@@ -25,6 +26,7 @@ export function normalizeTrip(raw: unknown): TripData {
     shopGroups: (parsed.shopGroups ?? []).map(normalizeGroup),
     days: parsed.days ?? [],
     bookings: parsed.bookings ?? [],
+    bills: parsed.bills ?? [],
   }
 }
 
