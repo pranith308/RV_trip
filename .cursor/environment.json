@@ -1,0 +1,17 @@
+{
+  "name": "RV_trip",
+  "install": "npm ci",
+  "ports": [
+    {
+      "name": "vite",
+      "port": 5173
+    }
+  ],
+  "terminals": [
+    {
+      "name": "dev",
+      "command": "npm run dev",
+      "description": "Vite development server on port 5173"
+    }
+  ]
+}
