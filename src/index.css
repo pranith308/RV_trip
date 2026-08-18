@@ -1078,6 +1078,10 @@ details[open] > .card-summary::before,
   margin-top: 0.15rem;
 }
 
+.shop-cat-body {
+  margin-top: 0.15rem;
+}
+
 .shop-cat-list .shop-row {
   background: var(--paper);
 }
@@ -1092,6 +1096,11 @@ details[open] > .card-summary::before,
   margin-top: 1rem;
   border-top: 2px dashed var(--paper-deep);
   padding-top: 0.7rem;
+}
+
+.done-group-cat {
+  margin-top: 0.55rem;
+  padding-top: 0.45rem;
 }
 
 .done-group summary {

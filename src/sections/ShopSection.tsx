@@ -32,7 +32,6 @@ export function ShopSection({
   const scope = parseShopScope(sub, personId)
   const categories = categoriesForScope(data, scope)
   const shopItems = itemsForScope(data, scope)
-  const doneItems = shopItems.filter((item) => item.done)
 
   useEffect(() => {
     if (openCategoryId && !categories.some((category) => category.id === openCategoryId)) {
@@ -40,7 +39,7 @@ export function ShopSection({
     }
   }, [categories, openCategoryId, onOpenCategory])
 
-  if (categories.length === 0 && doneItems.length === 0) {
+  if (categories.length === 0) {
     return (
       <>
         <p className="empty-hint">Tap + Add category to start a list.</p>
@@ -60,48 +59,48 @@ export function ShopSection({
 
   return (
     <div className="shop-wrap">
-      {categories.length === 0 ? (
-        <p className="empty-hint">Tap + Add category. Done items stay below.</p>
-      ) : (
-        <ol className="day-stack">
-          {categories.map((category) => {
-            const openItems = shopItems.filter(
-              (item) => !item.done && item.categoryId === category.id,
-            )
-            const isOpen = openCategoryId === category.id
-            return (
-              <li key={category.id} className="card day-block">
-                <CategoryHead
-                  title={category.title}
-                  open={isOpen}
-                  onToggle={() => onOpenCategory(isOpen ? null : category.id)}
-                  onDelete={() => deleteShopCategory(scope, category.id)}
-                />
-                {isOpen &&
-                  (openItems.length === 0 ? (
+      <ol className="day-stack">
+        {categories.map((category) => {
+          const categoryItems = shopItems.filter((item) => item.categoryId === category.id)
+          const openItems = categoryItems.filter((item) => !item.done)
+          const doneItems = categoryItems.filter((item) => item.done)
+          const isOpen = openCategoryId === category.id
+          return (
+            <li key={category.id} className="card day-block">
+              <CategoryHead
+                title={category.title}
+                open={isOpen}
+                onToggle={() => onOpenCategory(isOpen ? null : category.id)}
+                onDelete={() => deleteShopCategory(scope, category.id)}
+              />
+              {isOpen && (
+                <div className="shop-cat-body">
+                  {openItems.length === 0 && doneItems.length === 0 ? (
                     <p className="shop-cat-empty">Type an item below to add it here.</p>
-                  ) : (
+                  ) : null}
+                  {openItems.length > 0 ? (
                     <ul className="shop-list shop-cat-list">
                       {openItems.map((item) => (
                         <ShopRow key={item.id} item={item} done={false} scope={scope} />
                       ))}
                     </ul>
-                  ))}
-              </li>
-            )
-          })}
-        </ol>
-      )}
-      {doneItems.length > 0 && (
-        <details className="done-group">
-          <summary>Done ({doneItems.length})</summary>
-          <ul className="shop-list">
-            {doneItems.map((item) => (
-              <ShopRow key={item.id} item={item} done scope={scope} />
-            ))}
-          </ul>
-        </details>
-      )}
+                  ) : null}
+                  {doneItems.length > 0 ? (
+                    <details className="done-group done-group-cat">
+                      <summary>Done ({doneItems.length})</summary>
+                      <ul className="shop-list shop-cat-list">
+                        {doneItems.map((item) => (
+                          <ShopRow key={item.id} item={item} done scope={scope} />
+                        ))}
+                      </ul>
+                    </details>
+                  ) : null}
+                </div>
+              )}
+            </li>
+          )
+        })}
+      </ol>
       {categoryComposeOpen && (
         <AddCategorySheet
           scope={scope}

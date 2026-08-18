@@ -250,6 +250,11 @@
   border-top: 1px dashed var(--paper-deep);
 }
 
+[data-theme='journey'] .done-group-cat {
+  margin-top: 0.45rem;
+  padding-top: 0.35rem;
+}
+
 [data-theme='journey'] .done-group summary,
 [data-theme='journey'] .field-label,
 [data-theme='journey'] .empty-kicker,
