@@ -10,7 +10,6 @@ import {
   type SectionId,
 } from '../nav'
 import { groupSubId, useTripData } from '../data/trip'
-import { LocationSection } from '../sections/LocationSection'
 import { PlanSection } from '../sections/PlanSection'
 import { BillsDock, BillsSection } from '../sections/BillsSection'
 import { RvSection } from '../sections/RvSection'
@@ -179,7 +178,6 @@ export function AppShell() {
             onCloseCompose={() => setComposeOpen(false)}
           />
         )}
-        {route.section === 'location' && <LocationSection />}
       </main>
 
       <div className="dock">

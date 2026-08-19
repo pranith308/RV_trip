@@ -30,7 +30,6 @@ export function Mountains({ variant, scene = 'plan' }: MountainsProps) {
       {scene === 'shop' && <ShopArt />}
       {scene === 'rv' && <RvArt />}
       {scene === 'bills' && <BillsArt />}
-      {scene === 'location' && <LocationArt />}
     </svg>
   )
 }
@@ -212,43 +211,6 @@ function BillsArt() {
       <circle cx="108" cy="40" r="10" fill="#c9922a" stroke="#1c2b22" strokeWidth="1.2" />
       <circle cx="126" cy="34" r="8" fill="#e2c36a" stroke="#1c2b22" strokeWidth="1.2" />
       <circle cx="118" cy="48" r="6" fill="#f4e4c1" stroke="#1c2b22" strokeWidth="1.2" />
-    </g>
-  )
-}
-
-function Person({ fill }: { fill: string }) {
-  return (
-    <g>
-      <circle cx="0" cy="-11" r="5.5" fill="#f4e4c1" stroke="#1c2b22" strokeWidth="1.2" />
-      <path d="M-8 0 C-8 -6, 8 -6, 8 0 L10 16 L-10 16 Z" fill={fill} stroke="#1c2b22" strokeWidth="1.2" />
-    </g>
-  )
-}
-
-function LocationArt() {
-  return (
-    <g className="header-scene">
-      <g className="header-pulse">
-        <g transform="translate(118 22)">
-          <circle r="18" fill="none" stroke="#f0d48a" strokeWidth="1.2" opacity="0.7" />
-          <circle r="10" fill="none" stroke="#f0d48a" strokeWidth="1.2" opacity="0.85" />
-        </g>
-      </g>
-      <g transform="translate(36 36)">
-        <Person fill="#1e3d56" />
-      </g>
-      <g transform="translate(68 34)">
-        <Person fill="#c4471a" />
-      </g>
-      <g transform="translate(100 36)">
-        <Person fill="#c9922a" />
-      </g>
-      <g transform="translate(132 24)">
-        <Pin className="header-pin is-a" />
-      </g>
-      <g transform="translate(156 30)">
-        <Pin className="header-pin is-b" />
-      </g>
     </g>
   )
 }

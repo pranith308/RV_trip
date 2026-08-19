@@ -24,15 +24,6 @@ export const SECTIONS = [
     ],
   },
   {
-    id: 'location',
-    label: 'Location',
-    fullLabel: 'Location',
-    showAdd: false,
-    cornerAdd: false,
-    composer: 'none',
-    subs: [] as { id: string; label: string }[],
-  },
-  {
     id: 'bills',
     label: 'Expenses',
     fullLabel: 'Expenses',
@@ -64,7 +55,8 @@ export type Route = {
 
 const SECTION_ALIASES: Record<string, SectionId> = {
   trip: 'plan',
-  together: 'location',
+  together: 'plan',
+  location: 'plan',
 }
 
 const SUB_ALIASES: Record<string, string> = {
