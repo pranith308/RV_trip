@@ -15,6 +15,7 @@ type BottomNavProps = {
   onSelect: (sub: string) => void
   onDeleteTab?: (sub: string) => void
   onCornerAdd?: () => void
+  hiddenSubIds?: string[]
 }
 
 export function BottomNav({
@@ -25,9 +26,12 @@ export function BottomNav({
   onSelect,
   onDeleteTab,
   onCornerAdd,
+  hiddenSubIds = [],
 }: BottomNavProps) {
   const current = getSection(section)
-  const tabs = [...current.subs, ...extraTabs].map((item) => ({
+  const tabs = [...current.subs, ...extraTabs]
+    .filter((item) => !hiddenSubIds.includes(item.id))
+    .map((item) => ({
     ...item,
     label: tabLabels[item.id] ?? item.label,
     deletable: 'deletable' in item ? Boolean(item.deletable) : false,

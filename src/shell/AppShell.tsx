@@ -37,7 +37,7 @@ function saveLastSub(section: SectionId, sub: string) {
 }
 
 export function AppShell() {
-  const { current, switchTraveler } = useAuth()
+  const { current, switchTraveler, isHost } = useAuth()
   const { shopGroups, deleteGroup, checklists, resetExpiredChecklists } = useTripData()
   const [route, setRoute] = useState(() => parseHash(window.location.hash))
   const [composeOpen, setComposeOpen] = useState(false)
@@ -186,7 +186,7 @@ export function AppShell() {
             {route.sub === 'bookings' ? '+ Add booking' : '+ Add day'}
           </button>
         )}
-        {route.section === 'rv' && (
+        {route.section === 'rv' && route.sub !== 'access' && (
           <button type="button" className="create-bar" onClick={() => setComposeOpen(true)}>
             + Create new
           </button>
@@ -225,6 +225,7 @@ export function AppShell() {
           section={route.section}
           sub={route.section === 'shop' ? activeSub : route.sub}
           extraTabs={route.section === 'shop' ? shopExtraTabs : []}
+          hiddenSubIds={route.section === 'rv' && !isHost(current?.id) ? ['access'] : []}
           tabLabels={
             current ? { me: `${current.name}'s List` } : undefined
           }

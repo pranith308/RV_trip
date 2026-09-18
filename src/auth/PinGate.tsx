@@ -1,15 +1,17 @@
 import { useState } from 'react'
 import { GateCamp, GateScene, GateTrail } from '../components/GateArt'
 import { Mountains } from '../components/Mountains'
+import { getSnapshot } from '../data/store'
 import { useAuth } from './AuthContext'
 import { PinPad } from './PinPad'
 
-type GateMode = 'roster' | 'name' | 'pin' | 'confirm' | 'unlock'
+type GateMode = 'roster' | 'joinCode' | 'name' | 'pin' | 'confirm' | 'unlock'
 
 export function PinGate() {
   const { people, createPerson, unlock, enterIfTrusted, isTrusted } = useAuth()
   const [mode, setMode] = useState<GateMode>(people.length ? 'roster' : 'name')
   const [name, setName] = useState('')
+  const [joinCode, setJoinCode] = useState('')
   const [pin, setPin] = useState('')
   const [confirm, setConfirm] = useState('')
   const [selectedId, setSelectedId] = useState<string | null>(null)
@@ -17,6 +19,7 @@ export function PinGate() {
   const [busy, setBusy] = useState(false)
 
   const selected = people.find((person) => person.id === selectedId)
+  const allowNewTravelers = getSnapshot().access.allowNewTravelers
 
   function pickPerson(personId: string) {
     setError('')
@@ -29,9 +32,10 @@ export function PinGate() {
   function startCreate() {
     setError('')
     setName('')
+    setJoinCode('')
     setPin('')
     setConfirm('')
-    setMode('name')
+    setMode(people.length > 0 ? 'joinCode' : 'name')
   }
 
   function handlePin(next: string) {
@@ -78,7 +82,7 @@ export function PinGate() {
     }
 
     setBusy(true)
-    void createPerson(name, pin)
+    void createPerson(name, pin, joinCode)
       .then((message) => {
         setBusy(false)
         if (message) {
@@ -127,10 +131,58 @@ export function PinGate() {
                 </button>
               ))}
             </div>
-            <button type="button" className="primary-btn add-traveler-btn" onClick={startCreate}>
-              + Add a traveler
-            </button>
+            {allowNewTravelers || people.length === 0 ? (
+              <button type="button" className="primary-btn add-traveler-btn" onClick={startCreate}>
+                + Add a traveler
+              </button>
+            ) : (
+              <p className="gate-lead">New travelers are closed. Pick your name above.</p>
+            )}
           </>
+        )}
+
+        {mode === 'joinCode' && (
+          <form
+            className="gate-form"
+            onSubmit={(event) => {
+              event.preventDefault()
+              if (!joinCode.trim()) {
+                setError('Enter the join code from your host.')
+                return
+              }
+              setError('')
+              setMode('name')
+            }}
+          >
+            <p className="gate-lead">Enter the trip join code.</p>
+            <label className="field-label" htmlFor="join-code">
+              Join code
+            </label>
+            <input
+              id="join-code"
+              className="field access-code-input"
+              value={joinCode}
+              onChange={(event) => setJoinCode(event.target.value.toUpperCase())}
+              autoComplete="off"
+              autoFocus
+              maxLength={8}
+              placeholder="6 letters"
+            />
+            {error && <p className="gate-error">{error}</p>}
+            <button type="submit" className="primary-btn">
+              Continue
+            </button>
+            <button
+              type="button"
+              className="text-btn"
+              onClick={() => {
+                setError('')
+                setMode('roster')
+              }}
+            >
+              Back to roster
+            </button>
+          </form>
         )}
 
         {mode === 'name' && (
@@ -172,10 +224,10 @@ export function PinGate() {
                 className="text-btn"
                 onClick={() => {
                   setError('')
-                  setMode('roster')
+                  setMode(people.length > 0 ? 'joinCode' : 'roster')
                 }}
               >
-                Back to roster
+                Back
               </button>
             )}
           </form>
@@ -202,7 +254,7 @@ export function PinGate() {
                 setError('')
                 setPin('')
                 setConfirm('')
-                setMode(mode === 'unlock' ? 'roster' : 'name')
+                setMode(mode === 'unlock' ? 'roster' : mode === 'pin' ? 'name' : 'name')
               }}
             >
               Back

@@ -1,6 +1,7 @@
 import { useCallback, useSyncExternalStore } from 'react'
 import type {
   BillExpense,
+  BillSettlement,
   Booking,
   ChecklistItem,
   HowToNote,
@@ -12,6 +13,7 @@ import type {
   ShopGroup,
   ShopItem,
   ShopScope,
+  TripAccess,
   TripData,
 } from '../types'
 import { getSnapshot, newId, subscribe, updateTrip } from './store'
@@ -610,6 +612,46 @@ export function useTripData() {
     }))
   }, [])
 
+  const addBillSettlement = useCallback(
+    (settlement: Omit<BillSettlement, 'id' | 'createdAt'>) => {
+      updateTrip((current) => ({
+        ...current,
+        billSettlements: [
+          {
+            ...settlement,
+            id: newId(),
+            createdAt: new Date().toISOString(),
+          },
+          ...(current.billSettlements ?? []),
+        ],
+      }))
+    },
+    [],
+  )
+
+  const deleteBillSettlement = useCallback((settlementId: string) => {
+    updateTrip((current) => ({
+      ...current,
+      billSettlements: (current.billSettlements ?? []).filter(
+        (item) => item.id !== settlementId,
+      ),
+    }))
+  }, [])
+
+  const updateTripAccess = useCallback((patch: Partial<TripAccess>) => {
+    updateTrip((current) => ({
+      ...current,
+      access: { ...current.access, ...patch },
+    }))
+  }, [])
+
+  const regenerateJoinCode = useCallback((joinCode: string) => {
+    updateTrip((current) => ({
+      ...current,
+      access: { ...current.access, joinCode },
+    }))
+  }, [])
+
   return {
     ...data,
     addChecklist,
@@ -646,6 +688,10 @@ export function useTripData() {
     addBill,
     updateBill,
     deleteBill,
+    addBillSettlement,
+    deleteBillSettlement,
+    updateTripAccess,
+    regenerateJoinCode,
   }
 }
 

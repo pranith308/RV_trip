@@ -45,6 +45,14 @@ export async function insertPerson(person: Person) {
   return null
 }
 
+export async function deletePerson(personId: string) {
+  const supabase = getSupabase()
+  if (!supabase) return null
+  const { error } = await supabase.from('people').delete().eq('id', personId)
+  if (error) return error.message
+  return null
+}
+
 export async function uploadPeople(people: Person[]) {
   const supabase = getSupabase()
   if (!supabase || people.length === 0) return

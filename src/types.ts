@@ -142,6 +142,22 @@ export type BillExpense = {
   createdAt: string
 }
 
+export type BillSettlement = {
+  id: string
+  fromPersonId: string
+  toPersonId: string
+  amount: number
+  note?: string
+  createdAt: string
+  createdBy?: string
+}
+
+export type TripAccess = {
+  hostPersonId: string | null
+  joinCode: string
+  allowNewTravelers: boolean
+}
+
 export type TripData = {
   checklists: Checklist[]
   notes: HowToNote[]
@@ -153,4 +169,6 @@ export type TripData = {
   days: PlanDay[]
   bookings: Booking[]
   bills: BillExpense[]
+  billSettlements: BillSettlement[]
+  access: TripAccess
 }
