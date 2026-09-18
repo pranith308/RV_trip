@@ -34,14 +34,15 @@ export const SECTIONS = [
   },
   {
     id: 'rv',
-    label: 'RV',
-    fullLabel: 'The Coach',
+    label: 'Misc',
+    fullLabel: 'Misc',
     showAdd: false,
     cornerAdd: false,
     composer: 'none',
     subs: [
       { id: 'checklists', label: 'Checklists' },
       { id: 'notes', label: 'How-to' },
+      { id: 'access', label: 'Access' },
     ],
   },
 ] as const

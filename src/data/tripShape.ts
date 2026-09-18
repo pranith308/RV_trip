@@ -1,3 +1,4 @@
+import { defaultTripAccess } from './access'
 import { newId } from '../ids'
 import type { ShopCategory, ShopGroup, ShopItem, TripData } from '../types'
 
@@ -12,6 +13,8 @@ export const EMPTY_TRIP: TripData = {
   days: [],
   bookings: [],
   bills: [],
+  billSettlements: [],
+  access: defaultTripAccess(),
 }
 
 export function normalizeTrip(raw: unknown): TripData {
@@ -27,6 +30,12 @@ export function normalizeTrip(raw: unknown): TripData {
     days: parsed.days ?? [],
     bookings: parsed.bookings ?? [],
     bills: parsed.bills ?? [],
+    billSettlements: parsed.billSettlements ?? [],
+    access: {
+      ...defaultTripAccess(),
+      ...(parsed.access ?? {}),
+      joinCode: parsed.access?.joinCode || defaultTripAccess().joinCode,
+    },
   }
 }
 

@@ -1851,6 +1851,76 @@ a.booking-contact {
   border: 2px solid var(--cream);
 }
 
+.bills-settlement-add {
+  margin-top: 0.35rem;
+}
+
+.access-panel {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.access-block {
+  padding: 0.85rem 0.95rem 1rem;
+}
+
+.access-code {
+  font-family: var(--display);
+  font-size: 1.65rem;
+  letter-spacing: 0.22em;
+  text-align: center;
+  margin: 0.5rem 0 0.75rem;
+  color: var(--navy);
+}
+
+.access-code-input {
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.access-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.access-roster {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.access-roster-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  border: 2px solid var(--paper-deep);
+  padding: 0.45rem 0.55rem;
+  background: var(--paper);
+}
+
+.access-roster-name {
+  font-weight: 700;
+}
+
+.access-roster-tag {
+  margin-left: 0.35rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--forest);
+}
+
+.access-roster-you,
+.access-remove {
+  font-size: 0.88rem;
+}
+
 @media (min-width: 540px) {
   body {
     padding: 1.25rem 0;

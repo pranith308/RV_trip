@@ -9,8 +9,9 @@ import {
 } from 'react'
 import type { Person } from '../types'
 import { newId } from '../ids'
-import { fetchPeople, insertPerson, subscribePeople, uploadPeople } from '../data/peopleCloud'
+import { fetchPeople, insertPerson, subscribePeople, uploadPeople, deletePerson } from '../data/peopleCloud'
 import { isCloudConfigured } from '../data/supabase'
+import { getSnapshot, updateTrip } from '../data/store'
 import {
   getDeviceId,
   hashPin,
@@ -29,11 +30,13 @@ type AuthContextValue = {
   error: string | null
   people: Person[]
   current: Person | null
-  createPerson: (name: string, pin: string) => Promise<string | null>
+  createPerson: (name: string, pin: string, joinCode?: string) => Promise<string | null>
   unlock: (personId: string, pin: string) => Promise<boolean>
   enterIfTrusted: (personId: string) => boolean
   isTrusted: (personId: string) => boolean
   switchTraveler: () => void
+  removePerson: (personId: string) => Promise<string | null>
+  isHost: (personId: string | undefined) => boolean
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -93,7 +96,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [persist])
 
   const createPerson = useCallback(
-    async (name: string, pin: string) => {
+    async (name: string, pin: string, joinCode = '') => {
       const trimmed = name.trim()
       if (!trimmed) return 'Please enter a name.'
       if (!/^\d{4}$/.test(pin)) return 'PIN must be 4 digits.'
@@ -101,6 +104,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         (person) => person.name.toLowerCase() === trimmed.toLowerCase(),
       )
       if (taken) return 'That name is already on the trail.'
+
+      const access = getSnapshot().access
+      if (people.length > 0) {
+        if (!access.allowNewTravelers) {
+          return 'New travelers are not being accepted right now.'
+        }
+        if (joinCode.trim().toUpperCase() !== access.joinCode) {
+          return 'That join code is not right.'
+        }
+      }
 
       const id = newId()
       const person: Person = {
@@ -114,6 +127,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (cloudError) return 'Could not save that traveler. Try again.'
       trustPerson(id)
       persist([...people, person], person)
+      if (!access.hostPersonId) {
+        updateTrip((current) => ({
+          ...current,
+          access: { ...current.access, hostPersonId: id },
+        }))
+      }
       return null
     },
     [people, persist],
@@ -156,6 +175,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setCurrent(null)
   }, [])
 
+  const isHost = useCallback((personId: string | undefined) => {
+    if (!personId) return false
+    const hostId = getSnapshot().access.hostPersonId
+    if (!hostId) return people.length > 0 && people[0]?.id === personId
+    return hostId === personId
+  }, [people])
+
+  const removePerson = useCallback(
+    async (personId: string) => {
+      if (!isHost(current?.id)) return 'Only the trip host can remove travelers.'
+      if (personId === current?.id) return 'Switch to another traveler before removing yourself.'
+      const cloudError = await deletePerson(personId)
+      if (cloudError) return 'Could not remove that traveler. Try again.'
+      const nextPeople = people.filter((person) => person.id !== personId)
+      const access = getSnapshot().access
+      if (access.hostPersonId === personId) {
+        updateTrip((currentTrip) => ({
+          ...currentTrip,
+          access: {
+            ...currentTrip.access,
+            hostPersonId: current?.id ?? nextPeople[0]?.id ?? null,
+          },
+        }))
+      }
+      persist(nextPeople, current)
+      return null
+    },
+    [current, isHost, people, persist],
+  )
+
   const value = useMemo(
     () => ({
       ready,
@@ -168,8 +217,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       enterIfTrusted,
       isTrusted,
       switchTraveler,
+      removePerson,
+      isHost,
     }),
-    [ready, error, people, current, createPerson, unlock, enterIfTrusted, isTrusted, switchTraveler],
+    [
+      ready,
+      error,
+      people,
+      current,
+      createPerson,
+      unlock,
+      enterIfTrusted,
+      isTrusted,
+      switchTraveler,
+      removePerson,
+      isHost,
+    ],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

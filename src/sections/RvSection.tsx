@@ -7,6 +7,7 @@ import { youtubeThumbUrl } from '../data/youtube'
 import type { ChecklistItem, HowToNote } from '../types'
 import { AddChecklistSheet } from './AddChecklistSheet'
 import { AddNoteSheet } from './AddNoteSheet'
+import { AccessSection } from './AccessSection'
 
 type RvSectionProps = {
   sub: string
@@ -57,6 +58,10 @@ export function RvSection({ sub, composeOpen, onCloseCompose }: RvSectionProps) 
     )
     return () => timers.forEach((timer) => window.clearTimeout(timer))
   }, [checklists, resetChecklist])
+
+  if (sub === 'access') {
+    return <AccessSection />
+  }
 
   if (sub === 'notes') {
     return (

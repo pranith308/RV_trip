@@ -1,5 +1,9 @@
 -- Family Expedition shared tables
 -- Run this in the Supabase SQL editor once.
+--
+-- Note: RLS policies below are open for the anon key in the client app.
+-- Join codes and host controls in the app limit casual access; for stronger
+-- isolation, add server-side checks or tighten policies later.
 
 create table if not exists people (
   id uuid primary key,

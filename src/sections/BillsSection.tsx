@@ -4,8 +4,14 @@ import { useDeletePress } from '../components/DeleteMenu'
 import { Sheet } from '../components/Sheet'
 import { fileToJpegDataUrl } from '../data/images'
 import { useTripData } from '../data/trip'
-import { billBalances, money, sharesFor } from '../bills/split'
-import type { BillExpense, Person } from '../types'
+import {
+  billBalances,
+  billBalancesAfterSettlements,
+  money,
+  resolvedSettlementPlan,
+  sharesFor,
+} from '../bills/split'
+import type { BillExpense, BillSettlement, Person } from '../types'
 
 type BillsSectionProps = {
   composeOpen: boolean
@@ -64,31 +70,217 @@ export function BillsSection({ composeOpen, onCloseCompose }: BillsSectionProps)
 }
 
 export function BillsDock() {
-  const { bills = [] } = useTripData()
-  const { people } = useAuth()
+  const { bills = [], billSettlements = [], addBillSettlement, deleteBillSettlement } =
+    useTripData()
+  const { people, current } = useAuth()
+  const [settlementOpen, setSettlementOpen] = useState(false)
   const owed = billBalances(bills, people)
+  const afterSettlements = billBalancesAfterSettlements(bills, billSettlements, people)
+  const resolved = resolvedSettlementPlan(bills, billSettlements, people)
 
   return (
-    <details className="bills-balances">
-      <summary>Balances</summary>
-      <div className="bills-balances-body">
-        {owed.length === 0 ? (
-          <p className="bills-balance-row">All square.</p>
-        ) : (
-          owed.map((person) => (
-            <div
-              key={person.id}
-              className={`bills-balance-row${person.net > 0 ? ' is-owed' : ' is-owes'}`}
-            >
-              <span>{person.name}</span>
-              <span>
-                {person.net > 0 ? `is owed ${money(person.net)}` : `owes ${money(-person.net)}`}
-              </span>
-            </div>
-          ))
-        )}
-      </div>
-    </details>
+    <>
+      <details className="bills-balances">
+        <summary>Balances</summary>
+        <div className="bills-balances-body">
+          {owed.length === 0 ? (
+            <p className="bills-balance-row">All square from expenses.</p>
+          ) : (
+            owed.map((person) => (
+              <div
+                key={person.id}
+                className={`bills-balance-row${person.net > 0 ? ' is-owed' : ' is-owes'}`}
+              >
+                <span>{person.name}</span>
+                <span>
+                  {person.net > 0 ? `is owed ${money(person.net)}` : `owes ${money(-person.net)}`}
+                </span>
+              </div>
+            ))
+          )}
+        </div>
+      </details>
+
+      <details className="bills-balances">
+        <summary>Settlements ({billSettlements.length})</summary>
+        <div className="bills-balances-body">
+          {billSettlements.length === 0 ? (
+            <p className="bills-balance-row">No payments recorded yet.</p>
+          ) : (
+            billSettlements.map((settlement) => (
+              <SettlementRow
+                key={settlement.id}
+                settlement={settlement}
+                people={people}
+                onDelete={() => deleteBillSettlement(settlement.id)}
+              />
+            ))
+          )}
+          <button
+            type="button"
+            className="text-btn bills-settlement-add"
+            onClick={() => setSettlementOpen(true)}
+          >
+            + Record payment
+          </button>
+        </div>
+      </details>
+
+      <details className="bills-balances">
+        <summary>Resolved</summary>
+        <div className="bills-balances-body">
+          {afterSettlements.length === 0 ? (
+            <p className="bills-balance-row">All square.</p>
+          ) : resolved.length === 0 ? (
+            <p className="bills-balance-row">Balances still need manual cleanup.</p>
+          ) : (
+            resolved.map((transfer) => (
+              <div key={`${transfer.fromId}-${transfer.toId}`} className="bills-balance-row is-owes">
+                <span>
+                  {transfer.fromName} → {transfer.toName}
+                </span>
+                <span>{money(transfer.amount)}</span>
+              </div>
+            ))
+          )}
+          {afterSettlements.length > 0 && resolved.length > 0 ? (
+            <p className="field-hint">Suggested payments to settle what is left.</p>
+          ) : null}
+        </div>
+      </details>
+
+      {settlementOpen && (
+        <AddSettlementSheet
+          people={people}
+          onClose={() => setSettlementOpen(false)}
+          onSave={(draft) => {
+            addBillSettlement({ ...draft, createdBy: current?.name })
+            setSettlementOpen(false)
+          }}
+        />
+      )}
+    </>
+  )
+}
+
+function SettlementRow({
+  settlement,
+  people,
+  onDelete,
+}: {
+  settlement: BillSettlement
+  people: Person[]
+  onDelete: () => void
+}) {
+  const from = people.find((person) => person.id === settlement.fromPersonId)?.name ?? 'Traveler'
+  const to = people.find((person) => person.id === settlement.toPersonId)?.name ?? 'Traveler'
+  const { press, menu } = useDeletePress(`${from} paid ${to}`, onDelete)
+  return (
+    <div className="bills-balance-row is-owes" {...press}>
+      <span>
+        {from} paid {to}
+      </span>
+      <span>{money(settlement.amount)}</span>
+      {menu}
+    </div>
+  )
+}
+
+function AddSettlementSheet({
+  people,
+  onClose,
+  onSave,
+}: {
+  people: Person[]
+  onClose: () => void
+  onSave: (settlement: Omit<BillSettlement, 'id' | 'createdAt' | 'createdBy'>) => void
+}) {
+  const { current } = useAuth()
+  const [fromPersonId, setFromPersonId] = useState(current?.id ?? people[0]?.id ?? '')
+  const [toPersonId, setToPersonId] = useState(
+    people.find((person) => person.id !== current?.id)?.id ?? people[0]?.id ?? '',
+  )
+  const [amount, setAmount] = useState('')
+  const [note, setNote] = useState('')
+  const parsedAmount = Number.parseFloat(amount)
+  const ready =
+    Boolean(fromPersonId) &&
+    Boolean(toPersonId) &&
+    fromPersonId !== toPersonId &&
+    Number.isFinite(parsedAmount) &&
+    parsedAmount > 0
+
+  return (
+    <Sheet
+      title="Record payment"
+      submitLabel="Save"
+      onClose={onClose}
+      disableSubmit={!ready}
+      onSubmit={() => {
+        if (!ready) return
+        onSave({
+          fromPersonId,
+          toPersonId,
+          amount: Math.round(parsedAmount * 100) / 100,
+          note: note.trim() || undefined,
+        })
+      }}
+    >
+      <label className="field-label" htmlFor="settlement-from">
+        Who paid
+      </label>
+      <select
+        id="settlement-from"
+        className="field"
+        value={fromPersonId}
+        onChange={(event) => setFromPersonId(event.target.value)}
+      >
+        {people.map((person) => (
+          <option key={person.id} value={person.id}>
+            {person.name}
+          </option>
+        ))}
+      </select>
+
+      <label className="field-label" htmlFor="settlement-to">
+        Who received
+      </label>
+      <select
+        id="settlement-to"
+        className="field"
+        value={toPersonId}
+        onChange={(event) => setToPersonId(event.target.value)}
+      >
+        {people.map((person) => (
+          <option key={person.id} value={person.id}>
+            {person.name}
+          </option>
+        ))}
+      </select>
+
+      <label className="field-label" htmlFor="settlement-amount">
+        Amount
+      </label>
+      <input
+        id="settlement-amount"
+        className="field"
+        inputMode="decimal"
+        value={amount}
+        onChange={(event) => setAmount(event.target.value)}
+        placeholder="0.00"
+      />
+
+      <label className="field-label" htmlFor="settlement-note">
+        Note (optional)
+      </label>
+      <input
+        id="settlement-note"
+        className="field"
+        value={note}
+        onChange={(event) => setNote(event.target.value)}
+        placeholder="Cash, Venmo, etc."
+      />
+    </Sheet>
   )
 }
 
